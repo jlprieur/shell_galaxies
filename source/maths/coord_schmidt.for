@@ -1,0 +1,59 @@
+C++--------------------------------------------------------------------
+C COORD_SCHMIDT
+C Quick program to obtain the approximative (very approximative...)
+C coordinates from a schmidt plate when the centre is known.
+C--------------------------------------------------------------------
+	PROGRAM COORD_SCHMIDT
+	PRINT *,' X AND Y IN MM FROM THE BOTTOM LEFT HAND CORNER ?'
+	PRINT *,'          (REALS)'
+	READ(5,*) X,Y
+	PRINT *,' R.A. AND DEC. OF THE CENTER OF THE PLATE ?'
+	PRINT *,'          (FORMAT: H,MN,S,D,MN,S    ...INTEGERS)'
+	READ(5,*) IRAC0,IRAC1,IRAC2,IDEC0,IDEC1,IDEC2
+	RAC0=FLOAT(IRAC0)
+	RAC1=FLOAT(IRAC1)
+	RAC2=FLOAT(IRAC2)
+	DEC0=FLOAT(IDEC0)
+	DEC1=FLOAT(IDEC1)
+	DEC2=FLOAT(IDEC2)
+ 
+C Conversion into arcseconds
+	RAC00=((RAC0*60.+RAC1)*60.+RAC2)*15.
+	DEC00=(DEC0*60.+DEC1)*60.+DEC2
+	WORK=DEC00/3600.
+	SCALEX=67.1/COSD(WORK)
+	IF(SCALEX.LT.0.)SCALEX=-1.*SCALEX
+	PRINT *,' SCALE IN X:',SCALEX
+	SCALEY=67.1
+	DELTAX=(X-172.5)*SCALEX
+	DELTAY=(Y-172.5)*SCALEY
+	PRINT *,' OFFSET IN X AND Y:',DELTAX,DELTAY
+	PRINT *,'(IN ARCSECONDS)'
+C
+	RA00=RAC00-DELTAX
+	DE00=DEC00+DELTAY
+	PRINT *,' VALUES OF RA00 AND DE00:',RA00,DE00
+C Output: conversion to hours, mn, sec
+	RA00=RA00/15.
+	WORK1=RA00/3600.
+	IRA0=IFIX(WORK1)
+	WORK2=(WORK1-FLOAT(IFIX(WORK1)))*60.
+	IRA1=IFIX(WORK2)
+	RA2=(WORK2-FLOAT(IFIX(WORK2)))*60.
+C Output: conversion to degrees ' "
+	WORK1=DE00/3600.
+	IF(DE00.LT.0.)WORK1=-1.*WORK1
+	IDE0=IFIX(WORK1)
+	IF(DE00.LT.0.)IDE0=-1*IDE0
+	WORK2=(WORK1-FLOAT(IFIX(WORK1)))*60.
+	IDE1=IFIX(WORK2)
+	DE2=(WORK2-FLOAT(IFIX(WORK2)))*60.
+C
+	PRINT 100,IRA0,IRA1,RA2,IDE0,IDE1,DE2
+100	FORMAT(' RIGHT ASCENSION :',4X,I3,' H ',2X,I3,' MN  ',
+     1	F5.2,' S',/,
+     1	' DECLINATION :',8X,I3,' DEG',X,I3,' MN  ',
+     1	F5.2,' S')
+	STOP
+	END
+ 

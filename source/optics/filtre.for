@@ -1,0 +1,350 @@
+C++***********************************************************************
+C Program FILTRE
+C	PROGRAMME DE CALCUL DE TRANSMISSION TOTALE
+C	DE FILTRES EN TENANT COMPTE DU RENDEMENT QUANTIQUE
+C	DU C.C.D. UTILISE
+C	POSSIBILITE DE CALCULER LA BANDE PASSANTE,
+C	LA BANDE EQUIVALENTE, LE TAUX DE REJECTION
+C	ET DE COMPARER AUX BANDES DE JOHNSON.
+C JLP Version of 01-04-87
+C--***********************************************************************
+	COMMON LAMBDA(141)
+10	FORMAT(A)
+ 
+C	VALEURS DES LONGUEURS D'ONDE
+	DO 1 J=1,141
+	LAMBDA(J)=300+(J-1)*5
+1	CONTINUE
+ 
+C CHOIX D'UNE OPTION
+1000	PRINT 1001
+1001	FORMAT(' Menu :',/,
+     1	' 1. Creation of a new file ',/,
+     1	' 2. Combination of filters ',/,
+     1	' 3. Rejection',/,
+     1	' 4. Equivalent width',/,
+     1	' 5. Pass band',/,
+     1	' 6. Display on the Tektronix',/,
+     1	' 10. Exit',/,
+     1	' Enter your choice : ')
+	READ(5,*) IOP
+	IF(IOP.EQ.1)CALL NEWF
+	IF(IOP.EQ.2)CALL PROD
+	IF(IOP.EQ.3)CALL TREJ
+	IF(IOP.EQ.4)CALL BDEQ
+	IF(IOP.EQ.5)CALL BDPAS
+	IF(IOP.EQ.6)CALL DISPLAY_FILTER
+	IF(IOP.GE.7)GO TO 1009
+	GO TO 1000
+1009	END
+C********************************************************************
+C SOUS PROGRAMME CREATION D'UN FICHIER
+ 
+	SUBROUTINE NEWF
+ 
+	REAL*4 TRANS(141)
+	COMMON LAMBDA(141)
+ 
+	PRINT *,' Step in wavelenth : 5 nm or 50 nm ?'
+	READ(5,*) IPAS
+C-----------------------------
+C First : case when step = 50 nm
+ 
+	IF(IPAS.EQ.50)THEN
+ 
+C DONNEES DE LA TRANSMISSION DE 50 nm EN 50 nm
+	DO 3 I=1,141,10
+	PRINT *,' TRANSMISSION POUR',LAMBDA(I),'A?'
+	READ(5,*) TRANS(I)
+C INTERPOLATION LINEAIRE DE 5 nm EN 5 nm
+	IF(I.NE.1)THEN
+	  DO K=1,9
+	  J=I-K
+	  TRANS(J)=TRANS(I)-K*(TRANS(I)-TRANS(I-10))/10
+	  END DO
+	ENDIF
+3	CONTINUE
+ 
+	ELSE
+ 
+C-----------------------------
+C DEUXIEME CAS:PAS DE 5 nm
+1400	PRINT *,' A PARTIR DE QUELLE LONGUEUR D"ONDE VOULEZ VOUS
+     1	DONNER LA TRANSMISSION?'
+	READ(5,*) LMIN
+	PRINT *,' COMBIEN DE VALEURS DE 5 nm EN 5 nm VOULEZ VOUS DONNER?'
+	READ(5,*) M
+	LMAX=LMIN+5*M
+	IF(LMAX.GT.1000)GO TO 1400
+C DONNEES DE LA TRANSMISSION A PARTIR DE LMIN ET POUR M VALEURS
+	  DO I=1,M
+	  L=(LMIN-300)/5+I
+	  PRINT *,' TRANSMISSION POUR LA LONGUEUR D"ONDE',
+     1	LAMBDA(L),' A?'
+	  READ(5,*) TRANS(L)
+	  END DO
+	PRINT *,' QUELLE VALEUR DE LA TRANSMISSION ADOPTEZ VOUS
+     1	A DROITE?'
+	READ(5,*) TD
+	PRINT *,' QUELLE VALEUR DE LA TRANSMTSSION ADOPTEZ VOUS
+     1	A GAUCHE?'
+	READ(5,*) TG
+ 
+	 IF(LMIN.NE.300)THEN
+	  DO I=1,(LMIN-300)/5+1
+	  TRANS(I)=TG
+	  END DO
+	 ENDIF
+ 
+	 IF(LMAX.LT.1000)THEN
+	  DO I=(LMIN-300)/5+M,141
+	  TRANS(I)=TD
+	  END DO
+	 ENDIF
+ 
+	ENDIF
+ 
+C Writing on the file
+	NPL=141
+	CALL OUTPUT_FILTER(TRANS,NPL)
+ 
+	RETURN
+	END
+C****************************************************************
+ 
+	SUBROUTINE BDEQ
+ 
+	CHARACTER*30 NAME
+	REAL*4 TRANS(141)
+ 
+C Input :
+	CALL INPUT_FILTER(TRANS,NPL,NAME)
+ 
+C CALCUL DE LA BANDE EQUIVALENTE PAR INTERPOLATION LINEAIRE
+	BE=0
+	DO 8 I=1,141
+	BE=BE+TRANS(I)*5+(TRANS(I+1)-TRANS(I))*2.5
+8	CONTINUE
+ 
+	PRINT *,' VALEUR DE LA BANDE EQUIVALENTE:',BE
+	RETURN
+	END
+C***************************************************************
+ 
+	SUBROUTINE BDPAS
+ 
+	CHARACTER*30 NAME
+	COMMON LAMBDA(141)
+	REAL*4 TRANS(141)
+ 
+C Input :
+	CALL INPUT_FILTER(TRANS,NPL,NAME)
+ 
+C RECHERCHE DU MAXIMUM DE TRANSMISSION
+	I0=1
+	DO 104 K=1,141
+	IF(TRANS(I0).LT.TRANS(K)) I0=K
+104	CONTINUE
+	LMAX=LAMBDA(I0)
+ 
+C RECHERCHE DE LA LIMITE INF DE LA BANDE PASSANTE
+	DO 11 J=I0,1,-1
+	  IF(TRANS(J).LE.TRANS(I0)/2) THEN
+	  LINF=LAMBDA(J)+5*(TRANS(J)-TRANS(I0)/2)/(TRANS(J)
+     1	-TRANS(J+1))
+	  GO TO 1500
+	  ENDIF
+11	CONTINUE
+C	RECHERCHE DE LA LIMITE SUP DE LA BANDE PASSANTE
+1500	DO 12 M=I0,141,1
+	IF(TRANS(M).LE.TRANS(I0)/2) THEN
+	LSUP=LAMBDA(M)-5*(TRANS(M)-TRANS(I0)/2)/(TRANS(M)
+     1	-TRANS(M-1))
+	GO TO 1600
+	ENDIF
+12	CONTINUE
+1600	BD=LSUP-LINF
+	PRINT *,' LONGUEUR D''ONDE DU MAXIMUM :',LAMBDA(I0)
+	PRINT *,' LIMITE INF DE LA BANDE PASSANTE :',LINF
+	PRINT *,' LIMITE SUP DE LA BANDE PASSANTE :',LSUP
+	PRINT *,' LARGEUR DE LA BANDE PASSANTE :',BD
+	RETURN
+	END
+C**********************************************************************
+	  SUBROUTINE PROD
+C	CREATION D'UN FICHIER POUR LA SUPERPOSITION DE
+C	PLUSIEURS FILTRES
+	CHARACTER NAME*30
+	CHARACTER*80 IDENT,IDENTP
+	REAL*4 T1(141),TP(141)
+10	FORMAT (A)
+ 
+C Initialization of the array TP
+	DO 13 I=1,141
+	TP(I)=1
+13	CONTINUE
+ 
+	PRINT *,' COMBIEN DE FILTRES VOULEZ VOUS SUPERPOSER ?'
+	READ(5,*) N
+ 
+	DO 14 I=1,N
+ 
+C Input
+	CALL INPUT_FILTER(T1,NPL,NAME)
+ 
+	PRINT *,' QUELLE EST L''EPAISSEUR RELATIVE
+     1	DU FILTRE ',I,'?'
+	READ(5,*) P
+ 
+	DO 15 K=1,141
+	TP(K)=TP(K)*T1(K)**P
+15	CONTINUE
+ 
+14	CONTINUE
+ 
+C Output file :
+	PRINT *,' Output :'
+	CALL OUTPUT_FILTER(TP,NPL)
+ 
+	RETURN
+	END
+C****************************************************************
+C Computing the rejection of the filter
+C****************************************************************
+ 
+	SUBROUTINE TREJ	
+	
+	CHARACTER*80 IDENTS,IDENTT
+	CHARACTER NAME*30
+	REAL*4 S(141),T(141),P(141)
+ 
+C Input of the spectrum :
+	PRINT *,' Spectrum file (in photons/cm2/nm/s) :'
+	CALL INPUT_FILTER(S,NPL,NAME)
+ 
+C Input of the filter :
+	PRINT *,' Filter :'
+	CALL INPUT_FILTER(T,NPL,NAME)
+ 
+C Multiply the spectrum with the filter :
+	DO 16 I=1,141
+	P(I)=S(I)*T(I)
+16	CONTINUE
+ 
+C Computing the rejection :
+	PRINT *,'LIMITES DE LA BANDE DE LONGUEUR D"ONDE:'
+	PRINT *,'LINF?'
+	READ(5,*) LINF
+	PRINT *,'LSUP?'
+	READ(5,*) LSUP
+	JINF=(LINF-300)/5+1
+	JSUP=(LSUP-300)/5+1
+	SIGNAL=0
+	DO 17 J=JINF,JSUP-1
+	SIGNAL=SIGNAL+P(J)*5+(P(J+1)-P(J))*2.5
+17	CONTINUE
+ 
+C Computing the residuals (?)
+	PAR=0
+	DO 18 J=1,JINF-1
+	PAR=PAR+P(J)*5+(P(J+1)-P(J))*2.5
+18	CONTINUE
+	DO 19 J=JSUP,140
+	PAR=PAR+P(J)*5+(P(J+1)-P(J))*2.5
+19	CONTINUE
+	TR=PAR/SIGNAL
+ 
+	PRINT *,' VALEUR DU TAUX DE REJECTION:',TR
+ 
+	RETURN
+	END
+ 
+C--------------------------------------------------------------------------	
+C Input of a file :
+C--------------------------------------------------------------------------	
+	SUBROUTINE INPUT_FILTER(TRANS,NPL,NAME)
+	REAL*8 XX(141),YY(141)
+	CHARACTER*80 IDENT
+	CHARACTER NAME*30
+	REAL*4 TRANS(141)
+	
+1200	PRINT *,' INPUT FILE :'
+	READ(5,10) NAME
+10	FORMAT (A)
+	OPEN(1,FILE=NAME,STATUS='OLD',ERR=1200)
+	READ(1,*)NPL
+	  DO K=1,NPL
+	  READ(1,*)XX(K),YY(K)
+	  TRANS(K)=SNGL(YY(K))
+	  END DO
+	READ(1,10) IDENT
+	PRINT *,' IDENTIFICATION :'
+	PRINT 10,IDENT
+	CLOSE(1)
+ 
+	RETURN
+	END
+ 
+C-----------------------------------------------------------------
+C Output of a file :
+C-----------------------------------------------------------------
+	SUBROUTINE OUTPUT_FILTER(TRANS,NPL)
+	REAL*4 TRANS(141)
+	COMMON LAMBDA(141)
+	REAL*8 XX(141),YY(141)
+	CHARACTER*80 IDENT
+	CHARACTER NAME*30
+10	FORMAT(A)
+ 
+C Opening the file :
+101	PRINT *,' OUTPUT FILE : '
+	READ(5,10) NAME
+	OPEN(1,FILE=NAME,STATUS='NEW',ERR=101)
+	NPL=141
+ 
+	PRINT *,' IDENTIFICATION :'
+	READ(5,10) IDENT
+ 
+C Writing on the file
+	WRITE(1,*)NPL
+	  DO K=1,NPL
+	  YY(K)=TRANS(K)
+	  XX(K)=FLOAT(LAMBDA(K))
+	  WRITE(1,*)XX(K),YY(K)
+	  END DO
+	WRITE(1,10)IDENT
+	CLOSE(1)
+ 
+	RETURN
+	END
+C****************************************************************
+ 
+	SUBROUTINE DISPLAY_FILTER
+ 
+	CHARACTER NAME*30,TITLE*40,CHAR1*30,CHAR2*30
+	REAL*4 X1(141),Y1(141)
+	CHARACTER PLOTDEV*32
+	COMMON LAMBDA(141)
+ 
+C Input :
+	CALL INPUT_FILTER(Y1,NPL,NAME)
+ 
+c Conversion :
+	DO K=1,141
+	X1(K)=LAMBDA(K)
+	END DO
+ 
+C Display :
+	NSTART=1
+	NEND=141
+	PRINT *,' DEVICE : TEKTRO, CIFER_T5, CANON ?'
+	READ(5,10) PLOTDEV
+	TITLE=' '
+	CHAR1='LAMBDA (nm)'
+	CHAR2='TRANSMISSION'
+	TITLE(1:30)=NAME(1:30)
+	CALL DISPLAY1(X1,Y1,NSTART,NEND,
+     1	CHAR1,CHAR2,TITLE,PLOTDEV)
+ 
+	RETURN
+	END

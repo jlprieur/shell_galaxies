@@ -1,0 +1,14 @@
+C++**************************************************************************
+C
+C Environment for JLP programs:
+C
+C SYMBOLS:
+C
+C JLP_FORMAT  in_format, out_format     for reading/writing 2-D images
+C        (for the available possibilities, type "RUNS CONVERT_FORMAT ?")
+C JLP_QUIET   Y/N  if programs are quiet (output and questions in JLP_LU6.TMP)
+C JLP_PROMPT  Y/N  if programs are prompting the user or not
+C        (if not the data is read in the command line, and then in JLP_LU5.TMP)
+C
+C (For graphic environment, type "RUNS GRAPHICS ??")
+C--***************************************************************************

@@ -1,0 +1,32 @@
+Input image : (no longer used as input)
+*
+Type of profile : 1= "mean"   2="median" profile  (1) :
+*
+Name of the output profile ? (no longer used as input)
+*
+Option: 1=angular sector    2=complete annuli  3=multiple sectors :
+*
+Orientation (trigonometric: ox=0., oy=90.) (degrees between 0. and 360.) :
+*
+Axis ratio b/a :
+*
+Position of the centre of the galaxy xc, yc : (-1,-1 if galaxy centered)
+*,*
+First increment in arcsec  and  ratio of two successive increments :
+*,*
+Starting  and  ending mean radius (arcsec.) :
+*,*
+Limiting angles for the angular sector (if complete rings type 0.,0.) :
+*,*
+Sky level (used to compute the magnitudes in "profile1.log") :
+*
+Constant for the magnitudes (per square arcsec.) :
+*
+Scale in arcsec. per pixel :
+*
+Number of iterations, and sigma rejection (3 is rather good) :
+*,*
+Level of the points to reject (badvalue), (plagal: 0.,mosaic: 0.) :
+*
+Do you want to print the results in "profile1.log"  (n) ?
+*

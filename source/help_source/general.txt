@@ -1,0 +1,35 @@
+$!**************************************************************************
+$!  Command procedure to link JLP programs
+$!  Version of 25/08/87
+$!  
+$!! WARNING : THE ORDER IS VERY IMPORTANT ! Please do not change this order if
+$!! it is not necessary.
+$!
+$!
+$!
+$!
+$!
+$!
+$! Nota :
+$! (1) Uses VAX RTL dynamical allocation of memory
+$!
+$!**************************************************************************
+$!
+$ FOR/CHECK=BOUNDS SOURCE:'P1'		! 
+$!
+$ LINK 'P1',-				!
+ CORE:JLP_ACCESS/LIB,- 			! Access to BDF, CCD files
+ CORE:CCD_NEWACCESS/LIB,-		! Access to CCD files (1)
+ CORE:BDF_NEWACCESS/LIB,-		! Access to BDF files (1)
+ STARDISK:[STARLINK.PACK.ASPIC.EDRS]EDRSLIB/LIB,-		! General
+ STARDISK:[STARLINK.PACK.ASPIC.LIB]ROEARGS/LIB,-		! ARGS display
+ STARDISK:[STARLINK.PACK.ASPIC.LIB]ASPIC/LIB,-			! ARGS display
+ STARDISK:[STARLINK.LIB]ARGS/LIB/INCLUDE=(BDATA$DATA),-		! ARGS display
+ INTERIM/LIB,-				! General (access to BDF environment)
+ CORE:NEWPLOT/LIB,-			! Graphics (calls Stromlo and Mongo)
+ CORE:STROMLO_PLOT/LIB,-		! Graphics (Stromlo)
+ NAG_LIB/LIB,-				! Mathematical library
+ CORE:M_MONGO/LIB,-			! Personnal modifications from MONGO
+ @SGS_DIR:SGSLINK			! SGS and GKS (Graphics)
+$!
+$ RUN CORE:BELL				! Warning bell when finished

@@ -1,0 +1,146 @@
+C-----------------------------------------------------------------------
+C Program to display the circles determined by REMSTAR on the ARGS
+C to check if it is O.K.
+C Possibility of creating a file modified from the input list
+C-----------------------------------------------------------------------
+	PROGRAM REMSTAR_DISP
+	PARAMETER (IDIM=1000,KCUR=1000)
+	REAL*4 XPLOT(IDIM,KCUR),YPLOT(IDIM,KCUR)
+	INTEGER*4 NPTS(KCUR),IX(KCUR),IY(KCUR),IDIAM(KCUR)
+	INTEGER*4 IOUTX(100),IOUTY(100)
+	LOGICAL FOUND,MODIF
+	CHARACTER NAME1*40,NAME2*40
+	CHARACTER CHAR1*30,CHAR2*30,CHAR3*40
+	CHARACTER COLOUR1*1,COLOUR2*1
+	CHARACTER COLOUR(KCUR)*1,NCHAR(KCUR)*4
+ 
+10	FORMAT(A)
+	MODIF=.FALSE.
+C Possibility of displaying it again :
+	PRINT *,' DO YOU WANT TO ERASE THE OVERLAY PLANES ? (Y)'
+	READ(5,10) ANS
+	IF(ANS.NE.'N'.AND.ANS.NE.'n')THEN
+	CALL ARGS_ERASEJLP
+	ENDIF
+ 
+C Reading the positions in the file :
+5	PRINT *,' FILE WITH THE POSITIONS COMPUTED BY "REMSTAR" :'
+	READ(5,10) NAME1
+	OPEN(1,FILE=NAME1,STATUS='OLD',ERR=5)
+	K=1
+98	READ(1,*,ERR=99)IX(K),IY(K),IDIAM(K)
+	K=K+1
+	GO TO 98
+99	KTOTAL=K-1	
+	PRINT *,' NUMBER OF OBJECTS RECEIVED :',KTOTAL
+	CLOSE(1)
+ 
+C Possibility of changing the input list and store the result in a file:
+	PRINT *,' DO YOU WANT TO MODIFY THE INPUT LIST ? (N)'
+	READ(5,10) ANS
+	IF(ANS.EQ.'Y'.OR.ANS.EQ.'y')THEN
+	 MODIF=.TRUE.
+	 PRINT *,' SHIFT IN X, AND Y (INTEGER):'
+	 READ(5,*) ISHIFTX,ISHIFTY
+	 PRINT *,' ENLARGEMENT FACTOR FOR THE CIRCLES ?'
+	 READ(5,*) ENLARG
+	  DO K=1,KTOTAL
+	   IX(K)=IX(K)+ISHIFTX
+	   IY(K)=IY(K)+ISHIFTY
+	   IDIAM(K)=NINT(FLOAT(IDIAM(K))*ENLARG)
+	  END DO
+	ENDIF
+ 
+C Now preparing the array to display on the args :
+76	PRINT *,' COLOUR FOR THE CENTRES (B,Y,W,R ?)'
+	READ(5,10) COLOUR1
+	  NPTS(1)=KTOTAL
+	  COLOUR(1)=COLOUR1
+	  NCHAR(1)='45'
+	PRINT *,' COLOUR FOR THE CIRCLES (B,Y,W,R ?)'
+	READ(5,10) COLOUR2
+ 
+	KCU=1
+	DO 88 K=1,KTOTAL
+	IF(IDIAM(K).LE.0)GO TO 88
+	KCU=KCU+1
+	XPLOT(KCU,1)=FLOAT(IX(K))
+	YPLOT(KCU,1)=FLOAT(IY(K))
+	NPTS(KCU)=19
+	NCHAR(KCU)='L'
+	COLOUR(KCU)=COLOUR2
+ 
+C Generating the circles :
+	RAD=FLOAT(IDIAM(K)/2)
+	 DO J=1,19
+	  ANGLE=FLOAT(J)*20.
+	  XPLOT(J,KCU)=FLOAT(IX(K))+RAD*COSD(ANGLE)
+	  YPLOT(J,KCU)=FLOAT(IY(K))+RAD*SIND(ANGLE)
+	 END DO
+88	CONTINUE
+	PRINT *,' OBJECTS WITH DIAMETER NON NULL :',KCU
+ 
+C Displaying them on the ARGS :
+	PRINT *,' SIZE OF THE DISPLAYED IMAGE : NX, NY ?'
+	READ(5,*) NX,NY
+	CALL ARGS_DISPLAY(XPLOT,YPLOT,NPTS,IDIM,KCU,NCHAR,
+     1	COLOUR,NX,NY)
+ 
+C Possibility of using the cursor :
+	PRINT *,' DO YOU WANT TO CHANGE SOME PATCHES ? (N)'
+	READ(5,10) ANS
+	IF(ANS.EQ.'Y'.OR.ANS.EQ.'y')THEN
+	MODIF=.TRUE.
+	KTOT1=KTOTAL
+	CALL ARGS_CURSORJLP(IOUTX,IOUTY,NOUT,NX,NY)
+	   DO 86 I=1,NOUT
+	    IX00=IOUTX(I)
+	    IY00=IOUTY(I)
+	    FOUND=.FALSE.
+	     DO K=1,KTOT1
+	      DX=ABS(FLOAT(IX(K)-IX00))
+	      DY=ABS(FLOAT(IY(K)-IY00))
+	      IF(DX.LE.2..AND.DY.LE.2.)THEN
+	       FOUND=.TRUE.
+	       PRINT *,' MODIFYING AN OLD POSITION :'
+	       PRINT *,' IX, IY, IDIAM :',IX(K),IY(K),IDIAM(K)
+	       PRINT *,' NEW VALUE FOR IDIAM  (0,TO SUPPRESS IT) :'
+	       READ(5,*) IDIAM(K)
+	       GO TO 86
+	      ENDIF
+	     END DO
+	    IF(.NOT.FOUND)THEN
+	      KTOTAL=KTOTAL+1
+	      PRINT *,' CREATING A NEW POSITION :',IX00,IY00
+	      PRINT *,' DIAMETER IN PIXELS ? (0, IF ERROR)'
+	      READ(5,*) ID00
+	      IX(KTOTAL)=IX00
+	      IY(KTOTAL)=IY00
+	      IDIAM(KTOTAL)=ID00
+	    ENDIF
+86	  END DO
+	ENDIF
+ 
+C Possibility of displaying it again :
+	PRINT *,' DO YOU WANT TO DISPLAY IT AGAIN ? (Y)'
+	READ(5,10) ANS
+	IF(ANS.NE.'N'.AND.ANS.NE.'n')THEN
+	CALL ARGS_ERASEJLP
+	GO TO 76
+	ENDIF
+ 
+C Storing the output in  a file :
+	 IF(MODIF)THEN
+12	 PRINT *,' OUTPUT FILE ?'
+	 READ(5,10) NAME2
+ 	 OPEN(2,FILE=NAME2,STATUS='NEW',ERR=12)
+	  DO K=1,KTOTAL
+	   IF(IDIAM(K).NE.0) WRITE(2,*)IX(K),IY(K),IDIAM(K)
+	  END DO
+	 CLOSE(2)
+	 ENDIF
+	
+	STOP
+	END
+C------------------------------------------------------------------------
+	include 'jlpsub:args_display.for'

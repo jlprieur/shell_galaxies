@@ -1,0 +1,95 @@
+Help to create a command file for "FITELLI" 
+Version of 16-11-87
+
+c--------------------------------------------------------------------
+
+$ RUNSTAR FITELLI
+Format (2,2 real BDF)
+2,2
+Do you want interactive version ?
+N
+Do you want automatic sky level determination ?
+Y
+Name of the file (without .BDF !!!!)
+IC2977_RL_FR
+Working area : NX max and NY max ?
+320,512
+Centre of the galaxy (approx.) :
+189.,237.
+Scale ("/pixel) :
+0.492
+			Sky level ? (Only if non automatic sky determination !)
+			285.
+Min, max and step (in log10) :
+1.7,4.3,0.2
+Do you want another level ?
+N
+
+$RUNSTAR ELPLOT_MAIN
+Option 1 : displaying the contours
+1
+Input file :
+IC2977_RL_FR.GRA
+Output graphic device ?
+FILE
+Do you want the same scale in x and y ?
+N
+Enter xmin, xmax, ymin, ymax :
+0.,320.,0.,512.
+Option 10 : exit
+10
+
+C-----------------------------------------------------------
+Example 1 : Automatic sky determination
+
+$SET DEF DATA:[PRIEUR]
+$RUNSTAR FITELLI
+2,2
+N
+Y
+IC2977_RL_FR
+320,512
+189.,237.
+0.492
+1.7,4.,0.3
+N
+$RUNSTAR ELPLOT_MAIN
+1
+IC2977_RL_FR.GRA
+FILE
+N
+0.,320.,0.,512.
+10
+$PLOT/DEV=VERSATEC PLOT.PLT
+$!PLOT/DEV=LASERWRITER PLOT.PLT
+$!PLOT/DEV=PRINT PLOT.PLT
+$PRINT IC2977_RL_FR.DAT
+
+C--------------------------------------------------------------
+Example 2 : Non automatic sky determination
+
+$SET DEF DATA:[PRIEUR]
+$RUNSTAR FITELLI
+2,2
+N
+N
+IC2977_RL_FR
+0,0			! All the image
+189.,237.
+0.492
+385.			!(sky level)
+1.7,4.,0.3
+N
+$RUNSTAR ELPLOT_MAIN
+1
+IC2977_RL_FR.GRA
+FILE
+N
+0.,320.,0.,512.
+10
+$ PLOT/DEV=VERSATEC PLOT.PLT
+$!PLOT/DEV=LASERWRITER PLOT.PLT
+$!PLOT/DEV=PRINT PLOT.PLT
+$PRINT IC2977_RL_FR.DAT
+
+C--------------------------------------------------------------

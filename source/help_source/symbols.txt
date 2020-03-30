@@ -1,0 +1,125 @@
+C++*****************************************************************
+C TABLE OF SYMBOLS  
+C
+C*******************************************************************
+C STROMLO  :
+C
+C 'L'   : Continuous Curve (L for Line)
+C 'P'   : Plots points (dots) at data points
+C '.'   : ditto
+C 'C05' : Plots Crosses 0.05 inches high
+C         other sizes available. 
+C
+C         The following can have size in tenths of inch added
+C         Eg. 'SQ1'    (default 0.1 inches)
+C
+C 'SQ'   : Calcomp type Squares at data points. 0.1inches
+C 'HX'   :    "      "  Hexagons   "      "        "
+C 'TR'   :    "      "  Triangles   "      "       "
+C 'UT'   :   "        Upside down Triangles " "     "
+C 'MU'   :   "      " Multiply style cross "    "
+C 'ST'   :   "        Star
+C 'CR'   : Circle (Laserwriter only)
+C         In addition, the following set of filled symbols can
+C         be plotted on the Laserwriter: 'FSQ','FHX','FTR',FTR',
+C         'FUT','FCR'. Size can also be added eg. 'FSQ2'
+C         The following set of open symbols can also be plotted:
+C         'OSQ','OTR',OUT','OCR'.  They work with the /PEN=n 
+C         option whereas the Calcomp symbols don't.  They also 
+C         don't have the Calcomp style tick mark to their centers.
+C
+C*******************************************************************
+C NEWPLOT  :
+C
+C Code of the symbols available : (followed by a number between 1 and 9
+C to increase the size, example 46 = big crosses, 42=tiny crosses)
+C
+C 0 = Histogram
+C 1 = Small dot 
+C 2 = White triangle 
+C 3 = Black triangle 
+C 4 = Cross + 
+C 5 = Cross X 
+C 6 = White square 
+C 7 = Black square 
+C 8 = White circle 
+C 9 = Black circle 
+C
+C L Solid line
+C
+C*******************************************************************
+C MONGO  :
+C
+C Same code as NEWPLOT, with new possibilities for dashed curves.
+C Followed by a number between 1 and 9
+C to increase the size, example 46 = big crosses, 42=tiny crosses)
+C
+C 0 = Histogram
+C 1 = Small dot 
+C 2 = White triangle 
+C 3 = Black triangle 
+C 4 = Cross + 
+C 5 = Cross X 
+C 6 = White square 
+C 7 = Black square 
+C 8 = White circle 
+C 9 = Black circle 
+C
+C L or L0 solid line
+C L1 dashed line
+C
+C*******************************************************************
+C PGPLOT  :
+C
+C Same code as NEWPLOT, with new possibilities for dashed curves and new symbols
+C Followed by a number between 1 and 9
+C to increase the size, example 46 = big crosses, 42=tiny crosses.
+C
+C 1 = Small dot 
+C 2 = White triangle 
+C 3 = Black triangle 
+C 4 = Cross + 
+C 5 = Cross X 
+C 6 = White square 
+C 7 = Black square 
+C 8 = White circle 
+C 9 = Black circle 
+C
+C L, L0, or L1 : full line
+C L2 dashed line
+C L3 dash-dot-dash-dot...
+C L4 dotted
+C L5 dash-dot-dot-dot
+C
+C The following conventional PGPLOT symbols are no longer available (since
+C there have been replaced by new symbols):
+C old 1 dot
+C old 2 cross +
+C old 3 star *
+C old 4 open circle
+C old 5 cross x
+C old 6 open square (identical to 0)
+C old 7 open triangle, base down
+C old 8 open circle with a cross + inside
+C old 9 open circle with a dot inside
+C
+C Any symbol which is not between 1 and 9 still follows PGPLOT convention:
+C
+C 0 open square
+C 10 open square squashed from outside
+C 11 diamond (losange)
+C 12 open star with 5 peaks
+C 13 open square (identical to 0)
+C 14 open cross + (like the Red Cross)
+C 15 open Jewish star (6 branches)
+C 16 filled square
+C 17 filled circle
+C 18 filled star with 5 branches
+C 19 open square (identical to 0)
+C 20 to 27 open circles with increasing size
+C 28 arrow to the left
+C 29 arrow to the right
+C 30 arrow upwards
+C 31 arrow downwards
+C
+C--*****************************************************************

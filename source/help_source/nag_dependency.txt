@@ -1,0 +1,67 @@
+***********************************************************
+NAG dependency of JLP programs
+
+JLP 
+Version 23-07-91
+
+***********************************************************
+
+C06AAF: (Very old NAG version, not found anywhere)
+crcors.for
+D01AKF: (integral)
+app_flattening.for
+intmagni.for
+project.for (jlpsub)
+D01AMF:
+mass_hubble.for
+D01GAF: (integral)
+hankel.for
+period.for
+shell.for
+project.for (jlpsub)
+D02BBF: (differential equations)
+project.for (jlpsub)
+E01BAF: (sorting routine)
+project.for (jlpsub)
+E02BAF: (spline approximation)
+project.for (jlpsub)
+E02BBF: (cubic spline approximate)
+hubble.for
+intmagni.for
+plot1.for
+profiles_proc.for
+remgal.for
+E02BCF: (cubic spline fit)
+hubble.for
+king1.for
+period.for
+poten2.for
+project.for (jlpsub)
+E02CAF:
+background.for
+E02CBF:
+background.for
+E02DAF: (fit 2-D cubic splines)
+background.for
+E02ZAF:
+background.for
+E04GEF:
+hubble.for
+king1.for
+E04HEF:
+polyfit2.for (jlpsub, not used now)
+E04HFF:
+efit.for (jlpsub --> efit6, fitelli, fitou)
+polyfit1.for (jlpsub, not used now)
+F01ABF: (matrix inversion)
+polyfit2.for (jlpsub, not used now)
+F04AEF:  (to solve linear normal equations)
+xyfit1.for
+F04ATF: (to solve linear normal equations)
+crcors.for
+polyfit2.for (jlpsub, not used now)
+starfit_set.for (jlpsub)
+S17AEF:
+hankel.for
+M01ANF:
+median1.for

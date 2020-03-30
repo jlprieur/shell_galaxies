@@ -1,0 +1,40 @@
+C++***************************************************************************
+C Graphic.doc
+C Documentation for the syntax of the devices/symbols on the VAX.
+C 
+C Version 19-07-90
+C JLP
+C*****************************************************************************
+C Table of the available devices:
+C - With NEWPLOT: $TEKTRO, and $FILE
+C          (to plot the metafile PLOT.PLT on the laser/versatec use PLOTCOM)
+C - With MONGO (Manchester): #CIFER_T5, #CANON, #CANON_L, #CANON_P, #ARGS
+C          (automatic output of CANON.DAT to the laserprinter)
+C - With MONGO/AGL (ESO): &LASERA, &LASERB, &TERM
+C          (no longer available, but replaced by SMONGO/X11 on Unix)
+C - With MONGO/87: %AGFA_P, %AGFA_L, %APPLE_L, %APPLE_P, %TERM, %VERSA
+C          (automatic output of MGO123456.VEC to the laserprinter)
+C - With PGPLOT: *TXA1:/TEKTRO, *FILE.DAT/VERSATEC,...
+C          (to plot the metafile FILE.DAT on the Versatec use PGVER)
+C
+C*****************************************************************************
+C Table of the available symbols:
+C (followed by a number between 1 and 9to increase the size
+C     Example:  46=big crosses, 42=tiny crosses)
+C     0 = Histogram-like
+C     1 = Small dot 
+C     2 = Open triangle
+C     3 = Filled triangle 
+C     4 = Cross + 
+C     5 = Cross X 
+C     6 = Open square
+C     7 = Filled square
+C     8 = Open circle
+C     9 = Filled circle
+C For lines:    L=Solid line
+C With MONGO you also have L1=dashed line
+C With PGPLOT you also have L2=dashed line
+C L3 dash-dot,  L4 dot-dot, L5 dash-dot-dot-dot
+C
+C For more details on symbols, type "RUNS SYMBOLS ??"
+C--***************************************************************************

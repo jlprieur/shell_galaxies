@@ -1,0 +1,41 @@
+SOURCE=$(HOME)/source
+midir=$(HOME)/midas
+mylib=$(HOME)/jlpsub0
+smgolib=$(HOME)/smongo/src
+LIB=$(mylib)/newplot0.a $(mylib)/jlpacc.a $(mylib)/jlputil.a $(mylib)/jlpacc.a 
+SMGO=$(smgolib)/plotsub.a $(smgolib)/devices.a 
+XLIB= -lXaw -lXmu -lXt -lX11
+F77LIB=/usr/lib/libF77.a /usr/lib/libI77.a /usr/lib/libU77.a 
+MIDLIB=$(midir)/ftoclib.a $(midir)/tbllib.a $(midir)/stlib.a $(midir)/mathlib.a $(midir)/oslib.a
+F77=f77
+PF77=f77cvt
+ESOEXT=/midas/frozen/exec/esoext.exe
+INC=.
+FFLAGS=-c -g -C -vms 
+#	$(F77) -g -o $*.exe $*.o $(LIB) $(MIDLIB) $(SMGO) $(XLIB)
+
+.SUFFIXES:
+.SUFFIXES: .o .for .exe $(SUFFIXES) 
+
+.for.o:
+#	sed -e sxjlpsub:x/userssun/prieur/jlpsub/xgP $(SOURCE)/$*.for > $*.vf 
+#	f77cvt -i -e $*.vf
+#	rm $*.vf
+	sed -e sxjlpsub:x/userssun/prieur/jlpsub/xgP $(SOURCE)/$*.for > $*.f 
+	f77 $(FFLAGS) $*.f
+	rm $*.f
+
+.for.exe:
+	sed -e sxjlpsub:x/userssun/prieur/jlpsub/xgP $(SOURCE)/$*.for > $*.f 
+	f77 $(FFLAGS) $*.f
+	rm $*.f
+	f77 -g -o $(EXEC)/$*.exe $*.o $(LIB) $(MIDLIB) $(SMGO) $(XLIB)
+	rm $*.o
+
+.o.exe:
+	f77 -g -o $(EXEC)/$*.exe $*.o $(LIB) $(MIDLIB) $(SMGO) $(XLIB)
+	rm $*.o
+
+all: $*.exe
+$*.exe : $*.o $(SOURCE)/$*.for
+	@ sleep

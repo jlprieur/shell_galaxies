@@ -1,0 +1,24 @@
+$ set verify
+$ run exec:simu_plot
+2
+orbit.dat
+%agfa_p
+2 3
+Y
+-40.,40.,-40.,40.
+$ run exec:simu_plot
+1
+model.dat
+%agfa_p
+2,6
+2 3
+Y
+-40.,40.,-40.,40.
+Y
+-40.,40.,-40.,40.
+Y
+-40.,40.,-40.,40.
+Y 
+-40.,40.,-40.,40.
+Y 
+-40.,40.,-40.,40.

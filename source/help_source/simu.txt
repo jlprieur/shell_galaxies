@@ -1,0 +1,27 @@
+$!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+$! Simulation of 24 july 1989 16:15
+$! With setup_cluster1, that is with velocity dispersion at the same
+$! radius.
+$! Low mass
+$! Elliptical orbit with very small eccentricity
+$! Keplerian
+$!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+$ set verify
+$ run exec:setup_cluster1
+200		! Sigma cluster
+2.		! Rcore cluster
+30.		! Rtidal cluster
+1.e+08		! Galaxy mass
+4.		! Re Galaxy
+40.		! Initial distance
+e		! ellipse
+0.1		! fraction of circular energy
+1000		! number of particles
+1
+$ run exec:evolve_cluster1
+0.25,2400,600	! dt, number of steps, number of steps between outputs
+$ set noverify
+$laser agfa audit.dat
+$laser agfa simu_11jul.com
+$@simu6
+$exit

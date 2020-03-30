@@ -1,0 +1,63 @@
+1 I 2 TEKTRO                        0.5 0.5 6. 4.
+1 F 2 FILE                          0.6 0.5 6. 5.
+1 F 3 RAMTEK                        0.6 0.5 6. 5.
+1 F 4 TEK_&_FILE                    0.6 0.5 6. 5.
+1 F 5 RAM_&_FILE                    0.6 0.5 6. 5.
+1 F 6 TEK_&_RAM                     0.6 0.5 6. 5.
+1 F 7 TEK4662                       0.6 0.5 6. 5.
+1 F 8 LASER                         0.6 0.5 6. 5.
+1 F 9 LASER                         0.6 0.5 6. 5.
+2 I 1 TXA1:/TEK                     1.2 0.8 4.8 4.0
+2 I 1 _RTA1:/TEK                    1.2 0.8 4.8 4.0
+2 F 2 PGLOT.PLT/VERSA               1.8 0.8 6. 5.0
+3 I 2 CIFER_T5                      30. 20. 140. 110.
+3 I 2 ARGS                          50. 50. 220. 180.
+3 F 7 CANON_P                       30. 40. 120. 160.
+3 F 2 CANON_L                       50. 40. 160. 120.
+4 I 2 GRAPH_TERM:                   30. 20. 133.3 100.
+4 F 2 LASERB:                       50. 40. 160. 120.
+5 I 2 TERM                          80. 80. 800. 600.
+5 F 6 AGFA_P                        500. 600. 1534. 1544.
+5 F 2 AGFA_L                        600. 400. 1910. 1535.
+5 F 7 APPLE_P                       500. 600. 1534. 1544.
+5 F 2 APPLE_L                       600. 2000. 2369. 1535.
+5 F 6 LN03_P                        600. 800. 2060. 2076.
+5 F 2 LN03_L                        600. 400. 2543. 2055.
+5 F 5 QMS_P                         500. 600. 1529. 1529.
+5 F 2 QMS_L                         600. 400. 1882. 1529.
+5 F 7 VERSA_P                       300. 300. 1041. 1023.
+5 F 2 VERSA_L                       300. 300. 1258. 1044.
+C++*****************************************************************
+C GRAPHIC.KER
+C Data file with the window parameters for the graphic devices.
+C 5 Packages are available: 
+C     NEWPLOT (STROMLO modified), MONGO/GKS, PGPLOT, MONGO/AGL,
+C     and MONGO/87
+C
+C FORMAT:
+C
+C - ICODE ( NEWPLOT:$:1,PGPLOT:*:2,MONGO_GKS:#:3,MONGO_AGL:&:4,MONGO_87:%:5),
+C - I or F (interactive or File),
+C - Number of significant letters for the device name, 
+C - Device name, 
+C and after the 30th character:
+C - OFFX, OFFY, AXLEN, AYLEN (offset values and axis lengths)
+C 
+C Units for the window:
+C    - inches (?) for NEWPLOT and PGPLOT
+C    - mm (?) for MONGO (except Tonry's 1987 version)
+C    - for MONGO87: .126 mm/unit for Versatec, .063 for LN03 and .085 for AGFA
+C
+C Convention:
+C    I try to obtain "standard" graphs (independant of the laser printer
+C    used) with a frame of the following size:
+C            130 x 130 mm in portrait mode
+C            160 x 130 mm in landscape mode
+C
+C JLP
+C Version of 20-10-89: default values modified for apple2 (spectra...)
+C  Old values 16x13 cm:
+C 5 F 2 APPLE_L                       600. 2000. 1895. 1535.
+C  New values 20x13 cm: (22X13 was too big)
+C 5 F 2 APPLE_L                       600. 2000. 2369. 1535.
+C--*****************************************************************

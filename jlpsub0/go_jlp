@@ -1,0 +1,39 @@
+#!/bin/csh
+##############################################################################
+# Makefile for jlp libraries 
+#
+# JLP
+# Version 06-02-91 
+##############################################################################
+	echo "**************************************************** "
+	echo " Shell command to create new libraries from scratch"
+	echo " WARNING: This can take a lot of time..."
+	echo "**************************************************** "
+	echo " "
+	echo " Clearing all object files ? [n]"
+        set input=$<
+        if ($input == "y" || $input == "Y") then
+	#
+	clear:
+	make -f jlputil.make clear
+	make -f jlpacc.make clear
+	make -f newplot0.make clear
+	cd ../splot 
+	make -f jlp_splot.make clear
+	cd ../math
+	make clear 
+	cd ../jlpsub0 
+        endif
+#
+	makelib:
+	echo " Creation of all libraries: "
+	make -f jlputil.make
+	make -f jlpacc.make
+	make -f newplot0.make
+	cd ../splot 
+	make -f jlp_splot.make
+	cd ../math
+	make
+	make -f mymath.make jlp_math.o
+	cd ../jlpsub0 
+	end:

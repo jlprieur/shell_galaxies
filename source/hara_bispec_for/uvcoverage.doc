@@ -1,0 +1,25 @@
+4		Location
+30 0 0		Lowest elevation
+3000.		Lambda (nm)
+12 0 0		Right Ascension 
+15 0 0		Declination
+01 06 1989	Date of the beginning of the observations
+33 -90		Baseline: length (m) and azimuth (degrees)
+Y		New baseline
+66 -90		Baseline: length (m) and azimuth (degrees)
+Y		New baseline
+100 -90		Baseline: length (m) and azimuth (degrees)
+Y		New baseline
+30 0		Baseline: length (m) and azimuth (degrees)
+Y		New baseline
+100 -73		Baseline: length (m) and azimuth (degrees)
+Y		New baseline
+58 -60		Baseline: length (m) and azimuth (degrees)
+Y		New baseline
+80 0		Baseline: length (m) and azimuth (degrees)
+Y		New baseline
+130 0		Baseline: length (m) and azimuth (degrees)
+N		New baseline: No
+N		Plot: No		%APPLE_P		Redondant E-W Delta=15
+Y		Image: Yes
+-50. 50. -50. 50.

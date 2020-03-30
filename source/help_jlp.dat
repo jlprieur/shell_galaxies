@@ -1,0 +1,72 @@
+ "HELP_JLP" to use JLP programs and routines
+ Version of 14/11/88
+
+   Number of modules :   98
+
+  1.Image processing (2D)                 
+
+  ARCSMOOTH           Program       ARITHM              Program   
+  BACKGROUND          Program       CALIBPDS2           Program   
+  CCDCLEAN            Program       CENTROID1           Program   
+  CHECKFILE           Program       CIRC_PHOTOM         Program   
+  COMPRESS            Program       COMPRESS_CFHT       Program   
+  FFIELD              Program       FITELLI             Program   
+  FITOU               Program       FLATT2M             Program   
+  GRADIENT1           Program       MAGNITUDE           Program   
+  MASK                Program       MEDIAN1             Program   
+  MINIMIZE            Program       MORPHOLOGY          Program   
+  MOSAIC              Program       OPEREL              Program   
+  OPERI               Program       PATCH1              Program   
+  PLAGAL              Program       PLAGAL_BATCH        Program   
+  PROFILE1            Program       QUICKGRAD2          Program   
+  RADIAL_TANGENTIAL   Program       REMSTAR             Program   
+  RESAMPLE1           Program       SHIFT               Program   
+  SMOOTH1             Program       STARFIT1            Program   
+  XYFIT1              Program   
+
+  2. Spectro/profiles (1D)                
+
+  CALIBPDS1           Program       DEVAUC              Program   
+  HANKEL              Program       HUBBLE              Program   
+  INTMAGNI            Program       KING1               Program   
+  POLY                Program       PROFMINI            Program   
+  SHELL               Program       SHELL_INT           Program   
+  SHELL_PROC          Program       ZEROPOINT           Program   
+
+  3. Modelling/mathematics                
+
+  APP_FLATTENING      Program       DVHALO_QUINN        Program   
+  EFIT6               Program       EVOLVE_CLUSTER      Program   
+  MASS_HUBBLE         Program       PERIOD              Program   
+  POTEN1_3D           Program       POTEN2              Program   
+  SETUP_CLUSTER       Program       SHELLS_QUINN        Program   
+
+  4. Transfer/access to different formats 
+
+  BDF_PRO             Program       CONVERT_FORMAT      Program   
+  ECRIFITS            Program       GENE_XY             Program   
+  LECFITS             Program       MODIF_HEADER        Program   
+  PIPCCD              Program       PIPCDCA             Program   
+  READ_MEUDON         Program       SHELLS_PLOT_QUINN   Program   
+  STRUCBA1            Program       WRITEFILE           Program   
+
+  5. Graphic/display                      
+
+  ARGS_ELLIPSE        Program       DRAW_MEUDON         Program   
+  ELPLOT_MAIN         Program       GRINNEL             Program   
+  GRI_ELLI            Program       HISTO               Program   
+  ISOPHOTE            Program       PHOTO_LASER         Program   
+  PHOTO_VERSA         Program       PLOT1               Program   
+  PLOT_FIGARO         Program       SIMU_PLOT           Program   
+  SYMBOLS.DOC         Document      XYCURA1             Program   
+
+  6. Miscellaneous                        
+
+  ABSOR               Program       BELL                Program   
+  CALCUL              Program       CALIB               Program   
+  COORD_SCHMIDT       Program       FILTER1             Program   
+  FILTER_INDEX        Program       FILTRE              Program   
+  HELP_JLP            Program       PRECESSION          Program   
+  PRECOMPILER         Program       READ_CATALOG        Program   
+  READ_FIT            Program       SHELL.CAT           Catalogue 
+  UPPER_CASE          Program   
