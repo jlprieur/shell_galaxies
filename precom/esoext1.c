@@ -48,9 +48,7 @@ char      lbuf[MXLBUF][MXLINE];             /* buffer for input lines   */
 char                  u_text[] =            /* usage text               */
          "usage: esoext [-csdnilxuv] [-f file] [-I path]\n";
 
-main(argc, argv)
-int        argc;
-char    *argv[];
+int main(int argc, char *argv[])
 {
   int     c,ns,n,i,stype,action,labno,hstat[50];
   int     put_line(),line_type();
@@ -65,6 +63,11 @@ char    *argv[];
 
   f_flag = 0; x_flag = 0; fp = (FILE *) 0;
   f_name = (char *) 0; incl_path = (char *) 0;
+
+  if(argc == 1) {
+   printf("%s\n", u_text);
+   return(-1);
+   }
 
   argv++;
   if (--argc != 0)                 /* decode command line parameters         */
@@ -138,7 +141,8 @@ char    *argv[];
       fprintf(stderr,"Error: Opening output file >%s<\n",o_name);
       exit(1);
       }
-    if (x_flag & VER_FLAG)
+// JLP 2024: output even when -v is not selected
+//    if (x_flag & VER_FLAG)
         printf("Input file: >%s<, Output: >%s<\n",f_name,o_name);
 
 /* Initializing the parameters for this file: */
@@ -362,5 +366,5 @@ End of main loop on the lines: tidy up things now.
 /*******************************************************************
 End of the loop on the files: exit. 
 *******************************************************************/
-  exit(0);
+  return(0);
 }

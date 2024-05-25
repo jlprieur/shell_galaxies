@@ -23,8 +23,7 @@ static    char    *list[] =                 /* logical exp. and const.  */
                    {"EQ","NE","AND","OR","NOT","LT","LE","GT","GE",
                    "EQV","NEQV","TRUE","FALSE",(char *)0 };
 
-chk_io(plid)                      /* check identifiers in I/O statement */
-LID   *plid;
+int chk_io(LID *plid)
 {
   int   n;
   char  *pc;
@@ -34,11 +33,10 @@ LID   *plid;
     pc = plid->sid + plid->size + 1;
     if (*pc == '=') plid->size = 0;
   }
-  return;
+  return(0);
 }
 
-chk_exp(plid)                     /* check identifiers in expression   */
-LID    *plid;
+int chk_exp(LID *plid)
 {
   int   n,i;
   char  *pc,*pl;
@@ -64,5 +62,5 @@ LID    *plid;
     else if (isdigit((int)*pc)) plid->size = 0;
   }
 
-  return;
+  return(0);
 }

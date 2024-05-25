@@ -16,25 +16,13 @@
 
 #include   <stdio.h>                        /* standard I/O functions   */
 #include   <ctype.h>                        /* character types          */
-#include   <esoext.h>                       /* definition of constants  */
-
-extern    int                  x_flag;      /* extension option flag    */
-extern    int                   equal;      /* level zero equal sign    */
-extern    int                   comma;      /* level zero comma         */
-extern    int                     nlb;      /* present index in 'lbuf'  */
-extern    int                 id_size;      /* length of identifier     */
-extern    int                  no_lid;      /* no. of line identifiers  */
-extern    int                   nstat;      /* char. index in 'stat'    */
-extern    char                 stmt[];      /* present statement        */
-extern    char   lbuf[MXLBUF][MXLINE];      /* buffer for input lines   */
-extern    LID                   lid[];      /* list of line identifiers */
+#include   <esoext1.h>                      /* definition of routines  */
 
 static    int                 q_level;      /* quote level in statement */
 static    int                 p_level;      /* parenthesis level        */
 static    char                 *pstat;      /* pointer to statement     */
 
-char get_line(fp)                           /* add character to buffer  */
-FILE         *fp;
+char get_line(FILE *fp)                           /* add character to buffer  */
 {
   int          c,nlbuf,e_mark;
   char         *plbuf;

@@ -1,0 +1,716 @@
+      PROGRAMPLOT1
+      IMPLICITNONE
+      INTEGER*4IDIM,KCUR,MAXLAB
+      PARAMETER(IDIM=100000,KCUR=30,MAXLAB=50)
+      CHARACTERLABEL(MAXLAB)*30
+      REAL*4XLABEL(MAXLAB),YLABEL(MAXLAB),ANGLE_LABEL(MAXLAB)
+      INTEGER*4NLABELS,IXOFF_LABEL,IYOFF_LABEL
+      REAL*4XX,YY,ERRORX,ERRORY,CMAG,CTE,CMULT,EXPAND
+      REAL*4XPLOT,YPLOT,ERPLOTX,ERPLOTY
+      REAL*4COEFF,XOUT,YOUT
+      REAL*4XX1(IDIM),YY1(IDIM),XX2(IDIM),YY2(IDIM)
+      INTEGER*4NPTS,IOPT,IOPX,IOPY,IOUT_TO_FIRST
+      INTEGER*4ICURVE_ENTERED,ICURVE_DISPLAYED,KK,NOUT
+      INTEGER*4NPT1,NPT2,I,JLP_AXES
+      INTEGER*4XGRID_IS_WANTED,YGRID_IS_WANTED,X_IS_LOG10,Y_IS_LOG10
+      CHARACTERIN_FILE*40,IN_COMMENTS*80
+      CHARACTERCHAR1*40,CHAR2*40,CHAR3*40
+      CHARACTERNCHAR*4,PCOLOR*30,ANS*1,PLOTDEV*32
+      CHARACTERLABEL_FNAME*40,BUFFER*80
+      LOGICALERROR_PLOT,CHECK_INPUT
+      COMMON/BLOCKA/XX(IDIM,KCUR),YY(IDIM,KCUR),ERRORX(IDIM,KCUR),ERRORY
+     +(IDIM,KCUR)
+      COMMON/BLOCKB/XPLOT(IDIM,KCUR),YPLOT(IDIM,KCUR),ERPLOTX(IDIM,KCUR)
+     +,ERPLOTY(IDIM,KCUR),ERROR_PLOT,CHECK_INPUT
+      COMMON/BLOCKC/KK,NPTS(KCUR),NCHAR(KCUR),PCOLOR(KCUR),CMAG(KCUR),CT
+     +E(KCUR),COEFF(KCUR),CMULT(KCUR)
+      COMMON/STR_OUTPUT/XOUT(200),YOUT(200),NOUT
+      COMMON/STR_LABELS/NLABELS,XLABEL,YLABEL,ANGLE_LABEL,LABEL,IXOFF_LA
+     +BEL,IYOFF_LABEL
+ 3333 format(/,'Table of the available graphic devices:',/,'- NONE : no 
+     +graphic output',/,16x,/,'- With SPLOT: &xterm, &xterm_small, &Xter
+     +m, &Xterm_small, &hpgl',/,'   and postscript: &landscape, &postscr
+     +ipt,',' &squared, &fullpage',/,'(or &landscape/example.ps, ...)',/
+     +)
+ 3334 format(/,'Table of the available symbols:',/,' (followed by a numb
+     +er between 1 and 99, to increase the size)',/,5x,' Example:  460=b
+     +ig crosses, 420=tiny crosses)',/,5x,' 0 = Histogram-like',/,5x,' 1
+     + = Small dot ',/,5x,' 2 = Open triangle',/,5x,' 3 = Filled triangl
+     +e ',/,5x,' 4 = Cross + ',/,5x,' 5 = Cross X ',/,5x,' 6 = Open squa
+     +re',/,5x,' 7 = Filled square',/,5x,' 8 = Open circle',/,5x,' 9 = F
+     +illed circle',/,' For lines:    L=Solid line',/,' With MONGO: L0=s
+     +olid, L1=dotted, L2=dashed,',/,' With PGPLOT: L2=dashed,',/,' L3 d
+     +ash-dot,  L4 dot-dot, L5 dash-dot-dot-dot',/,/,' Colors available:
+     + Black,Gray,Purple,Aquamarine,R_G_B')
+   10 FORMAT(A)
+      ICURVE_ENTERED=0
+      ICURVE_DISPLAYED=0
+      NLABELS=0
+      PRINT88
+   88 FORMAT(5X,' Program PLOT1','    Version of 18-07-2007',/)
+      PRINT89
+   89 FORMAT(' Do you want me to type the values of the input',' files ?
+     + (N)')
+      READ(5,10)ANS
+      CHECK_INPUT=.FALSE.
+      IF(ANS.EQ.'Y'.OR.ANS.EQ.'y')CHECK_INPUT=.TRUE.
+      CALLJLP_BEGIN
+      CALLJLP_INQUIFMT
+      KK=0
+      ERROR_PLOT=.FALSE.
+   12 WRITE(6,130)
+  130 FORMAT(' Menu :',/,' 1. Input of vectors (X,Y)',/,' 2. Input of a 
+     +list (X,ERROR_X,Y,ERRROR_Y) with error bars',/,' 3. Input of a lis
+     +t of labels (in a file)')
+      IF(ICURVE_ENTERED.EQ.1)WRITE(6,131)
+  131 FORMAT(' 4. Displaying the lists as they are',/,' 5. Displaying th
+     +e lists after some changes (log,...)')
+      IF(ICURVE_DISPLAYED.EQ.1)WRITE(6,132)
+  132 FORMAT(' 6. Resetting the number of curves to 0',/,' 7. Saving a c
+     +urve in a file',/,' 8. Arithmetic on the curves')
+      WRITE(6,133)
+  133 FORMAT(' 10. Exit',/,5X,' Enter the option you want: ')
+      READ(5,*)IOPT
+      IF(IOPT.EQ.1)THEN
+      CALLRREADFILE(XX1,YY1,NPT1,XX2,YY2,NPT2,IDIM,IN_FILE,IN_COMMENTS,0
+     +)
+      KK=KK+1
+      NPTS(KK)=NPT1
+      CALLINPUT_NCHAR_PCOLOR(NCHAR(KK),PCOLOR(KK))
+      DO80000I=1,NPT1
+      XX(I,KK)=XX1(I)
+      YY(I,KK)=YY1(I)
+80000 CONTINUE
+      IF(CHECK_INPUT)THEN
+      DO80001I=1,NPT1
+      PRINT*,I,XX(I,KK),YY(I,KK)
+80001 CONTINUE
+      ENDIF
+      IF(NPT2.NE.0)THEN
+      KK=KK+1
+      NPTS(KK)=NPT2
+      CALLINPUT_NCHAR_PCOLOR(NCHAR(KK),PCOLOR(KK))
+      DO80002I=1,NPT2
+      XX(I,KK)=XX2(I)
+      YY(I,KK)=YY2(I)
+80002 CONTINUE
+      IF(CHECK_INPUT)THEN
+      DO80003I=1,NPT2
+      PRINT*,I,XX(I,KK),YY(I,KK)
+80003 CONTINUE
+      ENDIF
+      ENDIF
+      ICURVE_ENTERED=1
+      GOTO12
+      ENDIF
+      IF(IOPT.EQ.2)THEN
+      ERROR_PLOT=.TRUE.
+      KK=KK+1
+      CALLRREADFILE_ERRORS(XX1,YY1,XX2,YY2,NPT1,IDIM,IN_FILE,IN_COMMENTS
+     +,2)
+      NPTS(KK)=NPT1
+      DO80004I=1,NPT1
+      XX(I,KK)=XX1(I)
+      YY(I,KK)=YY1(I)
+      ERRORX(I,KK)=XX2(I)
+      ERRORY(I,KK)=YY2(I)
+80004 CONTINUE
+      IF(CHECK_INPUT)THEN
+      DO80005I=1,NPT1
+      PRINT508,I,XX(I,KK),YY(I,KK),ERRORX(I,KK),ERRORY(I,KK)
+80005 CONTINUE
+      ENDIF
+  508 FORMAT(' I=',I4,'X,Y,ERROR X,ERROR Y:',4(F12.3,1X))
+      CALLINPUT_NCHAR_PCOLOR(NCHAR(KK),PCOLOR(KK))
+      ICURVE_ENTERED=1
+      GOTO12
+      ENDIF
+      IF(IOPT.EQ.3)THEN
+      WRITE(6,301)
+  301 FORMAT(' Format of input file:',' col#1=Xstart col#2=Ystart col#3=
+     +angle col#4=label')
+      WRITE(6,302)
+  302 FORMAT(' Offset in X and Y to be added to label coordinates',' (be
+     +tween 0 and 32000): ')
+      READ(5,*)IXOFF_LABEL,IYOFF_LABEL
+      CALLREAD_LABELS(XLABEL,YLABEL,ANGLE_LABEL,LABEL,NLABELS,MAXLAB,LAB
+     +EL_FNAME)
+      GOTO12
+      ENDIF
+      IF(IOPT.EQ.4.OR.IOPT.EQ.5)THEN
+      IF(IOPT.EQ.4)THEN
+      IOPX=1
+      IOPY=1
+      ELSE
+      IOPX=0
+      IOPY=0
+      ENDIF
+      CALLCOORDINATE(IOPX,IOPY)
+   14 PRINT*,' TITLE ?'
+      READ(5,10)CHAR3
+      WRITE(CHAR3,19)CHAR3(1:38),CHAR(0)
+   19 FORMAT(A,A)
+      WRITE(6,*)CHAR3,'(OK)'
+      PRINT*,' X AXIS LABEL ?'
+      READ(5,10)CHAR1
+      WRITE(CHAR1,19)CHAR1(1:38),CHAR(0)
+      PRINT*,' Y AXIS LABEL ?'
+      READ(5,10)CHAR2
+      WRITE(CHAR2,19)CHAR2(1:38),CHAR(0)
+      PRINT*,'JLP_axes, XGRID, YGRID are wanted, X and Y is log10,',' ex
+     +pand (0,0,0,0,0,1.2)?'
+      READ(5,10)BUFFER
+      READ(BUFFER,*,ERR=90)JLP_AXES,XGRID_IS_WANTED,YGRID_IS_WANTED,X_IS
+     +_LOG10,Y_IS_LOG10,EXPAND
+      GOTO91
+   90 EXPAND=1.2
+      READ(BUFFER,*)JLP_AXES,XGRID_IS_WANTED,YGRID_IS_WANTED,X_IS_LOG10,
+     +Y_IS_LOG10
+   91 PRINT*,' OK: EXPAND=',EXPAND
+      PRINT*,' OK: BUFFER=',BUFFER
+   28 PRINT*,' Output device: ( &xterm, &square, ? for help)'
+      READ(5,10)PLOTDEV
+      IF((PLOTDEV(1:1).EQ.'?').OR.(PLOTDEV(1:1).EQ.' '))THEN
+      PRINT3333
+      GOTO28
+      ENDIF
+   50 IF(.NOT.ERROR_PLOT)THEN
+      CALLNEWPLOT1(XPLOT,YPLOT,NPTS,IDIM,KK,CHAR1,CHAR2,CHAR3,NCHAR,PCOL
+     +OR,PLOTDEV,IN_FILE,IN_COMMENTS,JLP_AXES,XGRID_IS_WANTED,YGRID_IS_W
+     +ANTED,X_IS_LOG10,Y_IS_LOG10,EXPAND)
+      ELSE
+      print*,' Error plot'
+      CALLNEWPLOT1_ERROR(XPLOT,YPLOT,ERPLOTX,ERPLOTY,NPTS,IDIM,KK,CHAR1,
+     +CHAR2,CHAR3,NCHAR,PCOLOR,PLOTDEV,IN_FILE,IN_COMMENTS,JLP_AXES,XGRI
+     +D_IS_WANTED,YGRID_IS_WANTED,X_IS_LOG10,Y_IS_LOG10,EXPAND)
+      ENDIF
+      IF(NOUT.NE.0)THEN
+      PRINT*,' ',NOUT,' points received'
+      DO80006I=1,NOUT
+      PRINT100,I,XOUT(I),YOUT(I)
+80006 CONTINUE
+  100 FORMAT(' POINT:',I5,' X=',F12.3,' Y=',F12.3)
+      ENDIF
+      PRINT*,' Do you want to change the parameters of',' the frame ?(N)
+     +'
+      READ(5,10)ANS
+      IF(ANS.EQ.'Y'.OR.ANS.EQ.'y')GOTO50
+      ICURVE_DISPLAYED=1
+      GOTO12
+      ENDIF
+      IF(IOPT.EQ.6)THEN
+      KK=0
+      ERROR_PLOT=.FALSE.
+      GOTO12
+      ENDIF
+      IF(IOPT.EQ.7)THEN
+      CALLOUTPUT_CURVE
+      GOTO12
+      ENDIF
+      IF(IOPT.EQ.8)THEN
+      CALLPLOT1_ARITH(IOUT_TO_FIRST)
+      GOTO12
+      ENDIF
+ 9999 CALLJLP_END
+      STOP
+      END
+      SUBROUTINECOORDINATE(IOPX,IOPY)
+      IMPLICITNONE
+      INTEGER*4IDIM,KCUR
+      PARAMETER(IDIM=100000,KCUR=30)
+      REAL*4XX,YY,CMAG,CTE,CMULT,XPLOT,YPLOT,ERPLOTX,ERPLOTY
+      REAL*4ERRORX,ERRORY,COEFF,WORK
+      INTEGER*4IOPX,IOPY,I,K,KK,NPTS
+      CHARACTERNCHAR*4,PCOLOR*30
+      LOGICALERROR_PLOT,CHECK_INPUT
+      COMMON/BLOCKA/XX(IDIM,KCUR),YY(IDIM,KCUR),ERRORX(IDIM,KCUR),ERRORY
+     +(IDIM,KCUR)
+      COMMON/BLOCKB/XPLOT(IDIM,KCUR),YPLOT(IDIM,KCUR),ERPLOTX(IDIM,KCUR)
+     +,ERPLOTY(IDIM,KCUR),ERROR_PLOT,CHECK_INPUT
+      COMMON/BLOCKC/KK,NPTS(KCUR),NCHAR(KCUR),PCOLOR(KCUR),CMAG(KCUR),CT
+     +E(KCUR),COEFF(KCUR),CMULT(KCUR)
+      IF(IOPX.LT.1.OR.IOPX.GT.4)THEN
+      PRINT*,' Do you want for the X axis :'
+      PRINT*,' 1.X, 2.LOG10(X-CTE1), 3.X**.25, 4.X**4 5.C1*(X-CTE1) ?'
+      READ(5,*)IOPX
+      ENDIF
+      IF(IOPX.EQ.1)THEN
+      DO80007K=1,KK
+      DO80008I=1,NPTS(K)
+      XPLOT(I,K)=XX(I,K)
+80008 CONTINUE
+80007 CONTINUE
+      ENDIF
+      IF(IOPX.EQ.2)THEN
+      PRINT*,' Constant you want to subtract from the X values'
+      DO80009K=1,KK
+      PRINT705,K
+      READ(5,*)CTE(K)
+80009 CONTINUE
+      DO80010K=1,KK
+      DO80011I=1,NPTS(K)
+      XPLOT(I,K)=XX(I,K)-CTE(K)
+      IF(XPLOT(I,K).GT.0.)THEN
+      XPLOT(I,K)=ALOG10(XPLOT(I,K))
+      ELSE
+      XPLOT(I,K)=-10.
+      ENDIF
+80011 CONTINUE
+80010 CONTINUE
+      ENDIF
+      IF(IOPX.EQ.3)THEN
+      DO80012K=1,KK
+      DO80013I=1,NPTS(K)
+      IF(XX(I,K).GT.0.)THEN
+      XPLOT(I,K)=XX(I,K)**0.25
+      ELSE
+      XPLOT(I,K)=0.
+      ENDIF
+80013 CONTINUE
+80012 CONTINUE
+      ENDIF
+      IF(IOPX.EQ.4)THEN
+      DO80014K=1,KK
+      DO80015I=1,NPTS(K)
+      XPLOT(I,K)=XX(I,K)**4
+80015 CONTINUE
+80014 CONTINUE
+      ENDIF
+      IF(IOPX.EQ.5)THEN
+      PRINT*,' C1 and CTE values:    C1 * (X - CTE)'
+      DO80016K=1,KK
+      PRINT705,K
+      READ(5,*)CMULT(K),CTE(K)
+80016 CONTINUE
+      DO80017K=1,KK
+      DO80018I=1,NPTS(K)
+      XPLOT(I,K)=CMULT(K)*(XX(I,K)-CTE(K))
+80018 CONTINUE
+80017 CONTINUE
+      ENDIF
+      IF(IOPY.LT.1.OR.IOPY.GT.5)THEN
+      PRINT703
+  703 FORMAT(' Do you want for the Y axis:',/,' 1. Y',/,' 2. CMULT * (Y-
+     +CTE)',/,' 3. LOG10(Y-CTE)',/,' 4. CMAG + COEFF*LOG10(Y-CTE)',/,' 5
+     +. CTE + 10**(-0.4*(Y-CMAG))',/,5X,' Enter the option you want: ')
+      READ(5,*)IOPY
+      ENDIF
+      IF(IOPY.NE.1.AND.IOPY.NE.2)THEN
+      PRINT*,' Constant you want to subtract from the Y values'
+      DO80019K=1,KK
+      PRINT705,K
+  705 FORMAT(' For curve #',I3,' :== ',$)
+      READ(5,*)CTE(K)
+80019 CONTINUE
+      ENDIF
+      IF(IOPY.EQ.2)THEN
+      PRINT*,' CMULT and CTE values:'
+      DO80020K=1,KK
+      PRINT706,K
+  706 FORMAT(' For curve #',I3,' CMULT, CTE :== ',$)
+      READ(5,*)CMULT(K),CTE(K)
+80020 CONTINUE
+      ENDIF
+      IF(IOPY.GE.4)THEN
+      PRINT*,' Enter CMAG, and COEFF (-2.5 ?):'
+      DO80021K=1,KK
+      PRINT705,K
+      READ(5,*)CMAG(K),COEFF(K)
+80021 CONTINUE
+      ENDIF
+      IF(IOPY.EQ.1)THEN
+      DO80022K=1,KK
+      DO80023I=1,NPTS(K)
+      YPLOT(I,K)=YY(I,K)
+80023 CONTINUE
+80022 CONTINUE
+      IF(ERROR_PLOT)THEN
+      DO80024K=1,KK
+      DO80025I=1,NPTS(K)
+      ERPLOTX(I,K)=ERRORX(I,K)
+      ERPLOTY(I,K)=ERRORY(I,K)
+80025 CONTINUE
+80024 CONTINUE
+      ENDIF
+      ENDIF
+      IF(IOPY.EQ.2)THEN
+      DO546K=1,KK
+      DO546I=1,NPTS(K)
+      YPLOT(I,K)=CMULT(K)*(YY(I,K)-CTE(K))
+  546 CONTINUE
+      IF(ERROR_PLOT)THEN
+      DO80026K=1,KK
+      DO80027I=1,NPTS(K)
+      ERPLOTX(I,K)=ERRORX(I,K)
+      ERPLOTY(I,K)=ERRORY(I,K)
+80027 CONTINUE
+80026 CONTINUE
+      ENDIF
+      ENDIF
+      IF(IOPY.EQ.3)THEN
+      DO80028K=1,KK
+      DO80029I=1,NPTS(K)
+      WORK=YY(I,K)-CTE(K)
+      IF(WORK.LE.0.)THEN
+      YPLOT(I,K)=-10.
+      ELSE
+      YPLOT(I,K)=ALOG10(WORK)
+      ENDIF
+80029 CONTINUE
+80028 CONTINUE
+      ENDIF
+      IF(IOPY.EQ.4)THEN
+      DO80030K=1,KK
+      DO80031I=1,NPTS(K)
+      WORK=YY(I,K)-CTE(K)
+      IF(WORK.LE.0.)THEN
+      YPLOT(I,K)=32.
+      ELSE
+      YPLOT(I,K)=CMAG(K)+COEFF(K)*ALOG10(WORK)
+      ENDIF
+80031 CONTINUE
+80030 CONTINUE
+      ENDIF
+      IF(IOPY.EQ.5)THEN
+      DO80032K=1,KK
+      DO80033I=1,NPTS(K)
+      WORK=-0.4*(YY(I,K)-CMAG(K))
+      IF(WORK.LT.-10..OR.WORK.GT.10.)THEN
+      YPLOT(I,K)=0.
+      ELSE
+      YPLOT(I,K)=CTE(K)+10**WORK
+      ENDIF
+80033 CONTINUE
+80032 CONTINUE
+      ENDIF
+      RETURN
+      END
+      SUBROUTINEPLOT1_ARITH(IOUT_TO_FIRST)
+      IMPLICITNONE
+      INTEGER*4IDIM,KCUR
+      PARAMETER(IDIM=100000,KCUR=30)
+      REAL*4XX,YY,CMAG,CTE,CMULT,XPLOT,YPLOT,ERPLOTX,ERPLOTY
+      REAL*4ERRORX,ERRORY,COEFF,YMIN0
+      INTEGER*4IOUT_TO_FIRST,ISTATUS,NC1,NC2
+      INTEGER*4K,KK,NPTS,IOP6,I,NPT0
+      CHARACTERNCHAR*4,PCOLOR*30
+      LOGICALERROR_PLOT,CHECK_INPUT
+      COMMON/BLOCKA/XX(IDIM,KCUR),YY(IDIM,KCUR),ERRORX(IDIM,KCUR),ERRORY
+     +(IDIM,KCUR)
+      COMMON/BLOCKB/XPLOT(IDIM,KCUR),YPLOT(IDIM,KCUR),ERPLOTX(IDIM,KCUR)
+     +,ERPLOTY(IDIM,KCUR),ERROR_PLOT,CHECK_INPUT
+      COMMON/BLOCKC/KK,NPTS(KCUR),NCHAR(KCUR),PCOLOR(KCUR),CMAG(KCUR),CT
+     +E(KCUR),COEFF(KCUR),CMULT(KCUR)
+      IOUT_TO_FIRST=0
+   66 PRINT67
+   67 FORMAT(' Menu ;',/,' WARNING : OPTIONS 1,2 OR 3',' ARE ONLY POSSIB
+     +LE ',' WHEN THE CURVES ARE SAMPLED IN THE SAME WAY (OPTION 4)',/,/
+     +,' 1. Subtraction of two curves and',' output in curve #1',/,' 2. 
+     +Division of two curves and',' output in curve #1',/,' 3. Minimum o
+     +f all the curves and',' output in curve #1',/,' 4. Resampling a cu
+     +rve',/,' 10. Return to the main menu',/,5X,' Enter the option you 
+     +want: ')
+      READ(5,*)IOP6
+      IF(IOP6.EQ.1)THEN
+      PRINT68
+   68 FORMAT(' Enter the entry number of the',' 2 curves (output=first-s
+     +econd)')
+      READ(5,*)NC1,NC2
+      NPT0=MIN(NPTS(NC1),NPTS(NC2))
+      NPTS(1)=NPT0
+      DO80034I=1,NPT0
+      IF(XPLOT(I,NC1).EQ.XPLOT(I,NC2))THEN
+      XPLOT(I,1)=XPLOT(I,NC1)
+      YPLOT(I,1)=YPLOT(I,NC1)-YPLOT(I,NC2)
+      ELSE
+      PRINT*,' ERROR : NOT SAMPLED IN THE SAME WAY'
+      PRINT*,' I, X1, X2 :',I,XPLOT(I,NC1),XPLOT(I,NC2)
+      GOTO66
+      ENDIF
+80034 CONTINUE
+      IOUT_TO_FIRST=1
+      ENDIF
+      IF(IOP6.EQ.2)THEN
+      PRINT69
+   69 FORMAT(' Enter the entry number of the',' 2 curves (output=first/s
+     +econd)')
+      READ(5,*)NC1,NC2
+      NPT0=MIN(NPTS(NC1),NPTS(NC2))
+      NPTS(1)=NPT0
+      DO80035I=1,NPT0
+      IF(XPLOT(I,NC1).EQ.XPLOT(I,NC2))THEN
+      XPLOT(I,1)=XPLOT(I,NC1)
+      IF(YPLOT(I,NC2).EQ.0)YPLOT(I,NC2)=0.1E-10
+      YPLOT(I,1)=YPLOT(I,NC1)/YPLOT(I,NC2)
+      ELSE
+      PRINT*,' Error: not sampled in the same way'
+      PRINT*,' I, X1, X2 :',I,XPLOT(I,NC1),XPLOT(I,NC2)
+      GOTO66
+      ENDIF
+80035 CONTINUE
+      IOUT_TO_FIRST=1
+      ENDIF
+      IF(IOP6.EQ.3)THEN
+      PRINT*,' Output: minimum of ',KK,' curves in curve #1'
+      NPT0=NPTS(1)
+      DO80036K=2,KK
+      NPT0=MIN(NPTS(K),NPT0)
+80036 CONTINUE
+      NPTS(1)=NPT0
+      DO80037I=2,NPT0
+      YMIN0=YPLOT(I,1)
+      DO80038K=1,KK
+      YMIN0=AMIN1(YPLOT(I,K),YMIN0)
+80038 CONTINUE
+      YPLOT(I,1)=YMIN0
+80037 CONTINUE
+      IOUT_TO_FIRST=1
+      ENDIF
+      IF(IOP6.EQ.4)THEN
+  401 PRINT63
+   63 FORMAT('Resampling a curve in x ',/,'Enter the entry numbers of th
+     +e',' 2 curves (curve to resample and reference):')
+      READ(5,*)NC1,NC2
+      PRINT*,' OK: Output in curve #',NC1
+      CALLRESAMPLE_CURVE(XX,YY,XPLOT,YPLOT,NPTS,IDIM,NC1,NC2,ISTATUS)
+      GOTO66
+      ENDIF
+      IF(IOUT_TO_FIRST.EQ.1)THEN
+      DO80039I=1,NPTS(1)
+      XX(I,1)=XPLOT(I,1)
+      YY(I,1)=YPLOT(I,1)
+80039 CONTINUE
+      KK=1
+      ENDIF
+      RETURN
+      END
+      SUBROUTINERESAMPLE_CURVE1(XX,YY,XPLOT,YPLOT,NPTS,IDIM,NC1,NC2,ISTA
+     +TUS)
+      IMPLICITNONE
+      INTEGER*4IDIM1
+      PARAMETER(IDIM1=100000)
+      INTEGER*4NPTS(*),NC1,NC2,IDIM
+      REAL*4XPLOT(IDIM,*),YPLOT(IDIM,*),XX(IDIM,*),YY(IDIM,*)
+      REAL*8XABSCISS,RESULT
+      REAL*8X1(IDIM1),Y1(IDIM1),SPLINE1(IDIM1),K1(IDIM1)
+      INTEGER*4I,IFAIL,ISTATUS,ISAFE,IMAX
+      ISTATUS=0
+      ISAFE=0
+      DO80040I=1,NPTS(NC1)
+      X1(I)=XPLOT(I,NC1)
+      Y1(I)=YPLOT(I,NC1)
+80040 CONTINUE
+      CALLINDEX_MAX4(XPLOT(1,NC2),NPTS(NC2),XPLOT(NPTS(NC1),NC1),IMAX)
+      NPTS(NC1)=IMAX
+      DO80041I=1,NPTS(NC1)
+      X1(I)=XPLOT(I,NC2)
+      XABSCISS=XPLOT(I,NC1)
+      IFAIL=1
+      IF(IFAIL.NE.0)THEN
+      PRINT97,IFAIL,I
+   97 FORMAT(' E02BBF : Failure in E02BBF, IFAIL=',I5,/,' AT POINT #',I5
+     +)
+      IF(ISAFE.EQ.0)THEN
+      PRINT98,NC2,NC1,NC1,NC2
+   98 FORMAT(' RESAMPLE_CURVE1/Fatal error, try again with ',I3,1X,I3,' 
+     +instead of ',I3,1X,I3)
+      ISAFE=1
+      RETURN
+      ELSE
+      PRINT*,'RESAMPLE_CURVE1/Sorry, the problem was harder...'
+      RETURN
+      ENDIF
+      ENDIF
+      Y1(I)=RESULT
+80041 CONTINUE
+      DO80042I=1,NPTS(NC1)
+      XPLOT(I,NC1)=X1(I)
+      YPLOT(I,NC1)=Y1(I)
+80042 CONTINUE
+      RETURN
+      END
+      SUBROUTINERESAMPLE_CURVE(XX,YY,XPLOT,YPLOT,NPTS,IDIM,NC1,NC2,ISTAT
+     +US)
+      INTEGER*4NPTS(*),NC1,NC2,IDIM,ISTATUS
+      REAL*4XPLOT(IDIM,*),YPLOT(IDIM,*),XX(IDIM,*),YY(IDIM,*)
+      REAL*4XLOC,DELTAX,DELTAY
+      INTEGER*4I,I1,I2
+      DO80043I=1,NPTS(NC2)
+      XLOC=XPLOT(I,NC2)
+      CALLINDEX_MAX4(XPLOT(1,NC1),NPTS(NC1),XLOC,I1)
+      I2=MIN(NPTS(NC1),I1+1)
+      DELTAY=YPLOT(I2,NC1)-YPLOT(I1,NC1)
+      DELTAX=XPLOT(I2,NC1)-XPLOT(I1,NC1)
+      IF(DELTAX.NE.0.)THEN
+      YY(I,NC1)=YPLOT(I1,NC1)+(XLOC-XPLOT(I1,NC1))*DELTAY/DELTAX
+      ELSE
+      YY(I,NC1)=YPLOT(I1,NC1)
+      ENDIF
+      IF(I.GT.400.AND.I.LT.450)THEN
+      PRINT*,'XPLOT(I,NC2),XPLOT(I1,NC1)'
+      PRINT*,XPLOT(I,NC2),XPLOT(I1,NC1)
+      PRINT*,'I,I1,I2,YY(I,NC1),YPLOT(I1,NC1)'
+      PRINT*,I,I1,I2,YY(I,NC1),YPLOT(I1,NC1)
+      ENDIF
+      XX(I,NC1)=XLOC
+80043 CONTINUE
+      NPTS(NC1)=NPTS(NC2)
+      DO80044I=1,NPTS(NC1)
+      XPLOT(I,NC1)=XX(I,NC1)
+      YPLOT(I,NC1)=YY(I,NC1)
+80044 CONTINUE
+      RETURN
+      END
+      SUBROUTINEOUTPUT_CURVE
+      PARAMETER(IDIM=100000,KCUR=30)
+      REAL*8XXWORK,YYWORK
+      REAL*4XX,YY,CMAG,CTE,CMULT,XPLOT,YPLOT,ERPLOTX,ERPLOTY
+      REAL*4ERRORX,ERRORY
+      CHARACTERNCHAR*4,PCOLOR*30
+      CHARACTERNAME*30
+      LOGICALERROR_PLOT,CHECK_INPUT
+      COMMON/BLOCKA/XX(IDIM,KCUR),YY(IDIM,KCUR),ERRORX(IDIM,KCUR),ERRORY
+     +(IDIM,KCUR)
+      COMMON/BLOCKB/XPLOT(IDIM,KCUR),YPLOT(IDIM,KCUR),ERPLOTX(IDIM,KCUR)
+     +,ERPLOTY(IDIM,KCUR),ERROR_PLOT,CHECK_INPUT
+      COMMON/BLOCKC/KK,NPTS(KCUR),NCHAR(KCUR),PCOLOR(KCUR),CMAG(KCUR),CT
+     +E(KCUR),COEFF(KCUR),CMULT(KCUR)
+   10 FORMAT(A)
+      PRINT*,' NUMBER OF THE CURVE YOU WANT TO OUTPUT ?'
+      READ(5,*)KK1
+  807 PRINT*,' NAME OF THE OUTPUT FILE ?'
+      READ(5,10)NAME
+      OPEN(1,FILE=NAME,STATUS='NEW',ACCESS='SEQUENTIAL',ERR=807)
+      WRITE(1,*)NPTS(KK1)
+      DO80045I=1,NPTS(KK1)
+      XXWORK=DBLE(XPLOT(I,KK1))
+      YYWORK=DBLE(YPLOT(I,KK1))
+      WRITE(1,*)XXWORK,YYWORK
+80045 CONTINUE
+      CLOSE(1)
+      RETURN
+      END
+      SUBROUTINEREAD_LABELS(XLABEL,YLABEL,ANGLE_LABEL,LABEL,NLABELS,MAXL
+     +AB,LABEL_FNAME)
+      REAL*4XLABEL(*),YLABEL(*),ANGLE_LABEL(*)
+      INTEGER*4NLABELS,MAXLAB
+      CHARACTERLABEL(MAXLAB)*30,BUFFER*100,BUFFER1*100
+      CHARACTERLABEL_FNAME*(*)
+   10 FORMAT(A)
+      WRITE(6,20)
+   20 FORMAT(' File with labels :')
+      READ(5,10)LABEL_FNAME
+      OPEN(3,FILE=LABEL_FNAME,STATUS='OLD')
+      NLABELS=0
+      DO80046I=1,MAXLAB
+      READ(3,10,ERR=67,END=67)BUFFER
+      IF(BUFFER(1:1).NE.'#')THEN
+      IMAX=100
+      CALLJLP_FREEFORMAT_R(BUFFER,IMAX,XLABEL(I),ISTAT)
+      CALLJLP_FREEFORMAT_R(BUFFER,IMAX,YLABEL(I),ISTAT)
+      CALLJLP_FREEFORMAT_R(BUFFER,IMAX,ANGLE_LABEL(I),ISTAT)
+      CALLJLP_FREEFORMAT_C(BUFFER,IMAX,LABEL(I),ISTAT)
+      WRITE(6,*)XLABEL(I),YLABEL(I),ANGLE_LABEL(I),LABEL(I)
+      ELSE
+      WRITE(6,30)BUFFER
+   30 FORMAT(' Comments: ',A)
+      ENDIF
+80046 CONTINUE
+   67 NLABELS=I-1
+      WRITE(6,40)NLABELS
+   40 FORMAT(' OK: ',I5,'labels read')
+      RETURN
+      END
+      SUBROUTINEJLP_FREEFORMAT_R(BUFFER,IMAX,VALUE,ISTAT)
+      CHARACTERBUFFER*(*)
+      INTEGER*4IMAX,ISTAT,I,J,I1
+      ISTAT=0
+      DO80047I=1,IMAX
+      IF(BUFFER(I:I).NE.' ')GOTO20
+80047 CONTINUE
+      WRITE(6,12)
+   12 FORMAT(' JLP_FREEFORMAT_R/Error: empty buffer')
+      ISTAT=-1
+      RETURN
+   20 I1=I-1
+      IMAX=IMAX-I1
+      IF(I1.GT.0)THEN
+      DO80048I=1,IMAX
+      J=I1+I
+      BUFFER(I:I)=BUFFER(J:J)
+80048 CONTINUE
+      ENDIF
+      READ(BUFFER,*)VALUE
+      DO80049I=1,IMAX
+      IF(BUFFER(I:I).EQ.' ')GOTO30
+80049 CONTINUE
+   30 I1=I-1
+      IMAX=IMAX-I1
+      IF(I1.GT.0)THEN
+      DO80050I=1,IMAX
+      J=I1+I
+      BUFFER(I:I)=BUFFER(J:J)
+80050 CONTINUE
+      ENDIF
+      RETURN
+      END
+      SUBROUTINEJLP_FREEFORMAT_C(BUFFER,IMAX,CVALUE,ISTAT)
+      IMPLICITNONE
+      CHARACTERBUFFER*(*),CVALUE*(*)
+      INTEGER*4IMAX,ISTAT,I,J,I1
+      ISTAT=0
+      DO80051I=1,IMAX
+      IF(BUFFER(I:I).NE.' ')GOTO20
+80051 CONTINUE
+      WRITE(6,12)
+   12 FORMAT(' JLP_FREEFORMAT_C/Error: empty buffer')
+      CVALUE=' '
+      ISTAT=-1
+      RETURN
+   20 I1=I-1
+      IMAX=IMAX-I1
+      IF(I1.GT.0)THEN
+      DO80052I=1,IMAX
+      J=I1+I
+      BUFFER(I:I)=BUFFER(J:J)
+80052 CONTINUE
+      ENDIF
+      CVALUE=BUFFER
+      RETURN
+      END
+      SUBROUTINEINPUT_NCHAR_PCOLOR(NCHAR0,PCOLOR0)
+      CHARACTERNCHAR0*4,PCOLOR0*30,BUFFER*80
+      INTEGERI,ISAFE
+   10 FORMAT(A)
+ 3333 format(/,'Table of the available graphic devices:',/,'- NONE : no 
+     +graphic output',/,16x,/,'- With SPLOT: &xterm, &xterm_small, &Xter
+     +m, &Xterm_small, &hpgl',/,'   and postscript: &landscape, &postscr
+     +ipt,',' &squared, &fullpage',/,'(or &landscape/example.ps, ...)',/
+     +)
+ 3334 format(/,'Table of the available symbols:',/,' (followed by a numb
+     +er between 1 and 99, to increase the size)',/,5x,' Example:  460=b
+     +ig crosses, 420=tiny crosses)',/,5x,' 0 = Histogram-like',/,5x,' 1
+     + = Small dot ',/,5x,' 2 = Open triangle',/,5x,' 3 = Filled triangl
+     +e ',/,5x,' 4 = Cross + ',/,5x,' 5 = Cross X ',/,5x,' 6 = Open squa
+     +re',/,5x,' 7 = Filled square',/,5x,' 8 = Open circle',/,5x,' 9 = F
+     +illed circle',/,' For lines:    L=Solid line',/,' With MONGO: L0=s
+     +olid, L1=dotted, L2=dashed,',/,' With PGPLOT: L2=dashed,',/,' L3 d
+     +ash-dot,  L4 dot-dot, L5 dash-dot-dot-dot',/,/,' Colors available:
+     + Black,Gray,Purple,Aquamarine,R_G_B')
+   27 PRINT*,'TYPE OF CHARACTER WITH SIZE, AND COLOR (? for help)'
+      READ(5,10)BUFFER
+      IF((BUFFER.EQ.'?').OR.(BUFFER.EQ.' '))THEN
+      PRINT3334
+      GOTO27
+      ELSE
+      I=INDEX(BUFFER,',')
+      IF(I.LE.1)THEN
+      NCHAR0=BUFFER
+      PCOLOR0='Default'
+      ELSE
+      NCHAR0=BUFFER(1:I-1)
+      PCOLOR0=BUFFER(I+1:)
+      ENDIF
+      ENDIF
+      RETURN
+      END

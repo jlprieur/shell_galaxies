@@ -18,20 +18,8 @@
 #include   <stdio.h>                        /* standard I/O functions   */
 #include   <ctype.h>                        /* character types          */
 #include   <string.h>                       /* string functions         */
-#include   <esoext.h>                       /* definition of constants  */
 #include   <f77stat.h>                      /* FORTRAN statement types  */
-
-extern    int                 section;      /* program section          */
-extern    int                  x_flag;      /* extension option flag    */
-extern    int                   equal;      /* level zero equal sign    */
-extern    int                   comma;      /* level zero comma         */
-extern    int                     nlb;      /* present index in 'lbuf'  */
-extern    int                 id_size;      /* length of identifier     */
-extern    int                  no_lid;      /* no. of line identifiers  */
-extern    int                   nstat;      /* char. index in 'stmt'    */
-extern    char                 stmt[];      /* present statement        */
-extern    char   lbuf[MXLBUF][MXLINE];      /* buffer for input lines   */
-extern    LID                   lid[];      /* list of line identifiers */
+#include   <esoext1.h>                       /* definition of constants  */
 
 static    FSTAT   fs_none[] = {             /* f77 stat. without , or = */
                   { IF,               "IF"},
@@ -133,15 +121,14 @@ static    FSTAT   fs_if[] = {               /* f77 stat. in IF stat.    */
                   { PAUSE,            "PAUSE"},
                   { 0,                (char *) 0}};
 
-int line_type(ptype)                         /* find statement type      */
-int      *ptype;
+int line_type(int *ptype)
 {
   int    no,action,n,err,f77_sect();
   char   *pc,type,group,*find_f77();
   ID     *pid;
   LID    *plid;
 /* JLP 91 */
-  register int i;
+  int i;
   char   stmt_upper[MXSTAT];
 
   action = NO_ACTION;                        /* initiate action to none  */

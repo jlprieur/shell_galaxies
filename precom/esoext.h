@@ -11,6 +11,9 @@
 .VERSION     1.1   14-Jan-1988: Add lower case include names,  PJG
 .VERSION     1.2   02-Apr-1991: Increase MXLID, JLP 
 ------------------------------------------------------------------------*/
+#ifndef esoext_h
+#define esoext_h
+
 
 #define    DO_FLAG     0x0001        /* substitute ENDDO with CONTINUE  */
 #define    IMP_FLAG    0x0002        /* remove IMPLICIT NONE statement  */
@@ -58,3 +61,5 @@ typedef  struct {                    /* identifier in statement         */
            int                 lno;  /* start line of identifier        */
            int               level;  /* parenthesis level of identifier */
          } LID;
+
+#endif

@@ -21,16 +21,7 @@
 #include   <esoext.h>                       /* definition of constants  */
 #include   <f77stat.h>                      /* F77 statements           */
 
-extern    int                  x_flag;      /* extension option flag    */
-extern    int                     nlb;      /* present index in 'lbuf'  */
-extern    int                  no_lid;      /* no. of line identifiers  */
-extern    int                     sno;      /* current no. of labels    */
-extern    int                statno[];      /* statement label no.      */
-extern    char                 stmt[];      /* present statement        */
-extern    char   lbuf[MXLBUF][MXLINE];      /* buffer for input lines   */
-extern    LID                   lid[];      /* list of line identifiers */
-extern    int                do_level;      /* DO stack pointer         */
-extern    int                do_label;      /* DO label                 */
+#include   <esoext1.h>                      /* definition of routines  */
 
 static    int            dostk[MXLDO];      /* DO label stack           */
 

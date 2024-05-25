@@ -7,6 +7,7 @@ include $(JLPSRC)/jlp_make.mk
 MY_DEPENDENCIES=../jlp_incl/jlp_ftoc_proto.h
 DESTIN=$(JLPLIB)/jlp
 JLPSUB=../jlpsub
+JLPINCL=../jlp_incl
 # JLP97: I replace jlpsub/jlp_access.for 
 # by jlpsub0/jlp0_accc.c and jlpsub/jlp_access2.for:
 OBJ=jlp0_accc.o jlp0_begin_c.o jlp_access2.o jlp_begin.o \
@@ -15,16 +16,17 @@ OBJ=jlp0_accc.o jlp0_begin_c.o jlp_access2.o jlp_begin.o \
 	jlp_tiff.o readfile1.o readfile2.o eric_format.o
 ################################################################
 
+FFLAGS1 = $(FFLAGS) -fallow-argument-mismatch -I$(JLPINCL)
 .SUFFIXES:
 .SUFFIXES: .o .c .for  $(SUFFIXES)
 
 .c.o:
-	cc -c $(CFLAGS) $*.c
+	cc -c $(CFLAGS) -I$(JLPINCL) $*.c
 	ar r $(DESTIN)/jlpacc.a $*.o 
 
 .for.o:
 	$(EXEC)/esoext1.exe -I $(JLPSUB) -f $*.for
-	$(F77) -c $(FFLAGS) $*.f
+	$(F77) -c $(FFLAGS1) $*.f
 	rm $*.f
 	ar r $(DESTIN)/jlpacc.a $*.o 
 	
@@ -34,7 +36,7 @@ all: $(OBJ)
 jlp_access.o : $(JLPSUB)/jlp_access.for 
 	$(EXEC)/esoext1.exe -f $(JLPSUB)/jlp_access.for
 	mv $(JLPSUB)/jlp_access.f .
-	$(F77) -c $(FFLAGS) jlp_access.f
+	$(F77) -c $(FFLAGS1) jlp_access.f
 	rm jlp_access.f
 	ar r $(DESTIN)/jlpacc.a jlp_access.o 
 
@@ -43,35 +45,35 @@ jlp_access.o : $(JLPSUB)/jlp_access.for
 jlp_access2.o : $(JLPSUB)/jlp_access2.for 
 	$(EXEC)/esoext1.exe -f $(JLPSUB)/jlp_access2.for
 	mv $(JLPSUB)/jlp_access2.f .
-	$(F77) -c $(FFLAGS) jlp_access2.f
+	$(F77) -c $(FFLAGS1) jlp_access2.f
 	rm jlp_access2.f
 	ar r $(DESTIN)/jlpacc.a jlp_access2.o 
 
 jlp_begin.o : $(JLPSUB)/jlp_begin.for 
 	$(EXEC)/esoext1.exe -f $(JLPSUB)/jlp_begin.for
 	mv $(JLPSUB)/jlp_begin.f .
-	$(F77) -c $(FFLAGS) jlp_begin.f
+	$(F77) -c $(FFLAGS1) jlp_begin.f
 	rm jlp_begin.f
 	ar r $(DESTIN)/jlpacc.a jlp_begin.o 
 
 jlp0_vax1.o : $(JLPSUB)/jlp0_vax1.for 
 	$(EXEC)/esoext1.exe -f $(JLPSUB)/jlp0_vax1.for
 	mv $(JLPSUB)/jlp0_vax1.f .
-	$(F77) -c $(FFLAGS) jlp0_vax1.f
+	$(F77) -c $(FFLAGS1) jlp0_vax1.f
 	rm jlp0_vax1.f
 	ar r $(DESTIN)/jlpacc.a jlp0_vax1.o 
 
 readfile1.o: $(JLPSUB)/readfile1.for
 	$(EXEC)/esoext1.exe -f $(JLPSUB)/readfile1.for
 	mv $(JLPSUB)/readfile1.f .
-	$(F77) -c $(FFLAGS) readfile1.f
+	$(F77) -c $(FFLAGS1) readfile1.f
 	rm readfile1.f
 	ar r $(DESTIN)/jlpacc.a readfile1.o
 
 readfile2.o: $(JLPSUB)/readfile2.for
 	$(EXEC)/esoext1.exe -f $(JLPSUB)/readfile2.for
 	mv $(JLPSUB)/readfile2.f .
-	$(F77) -c $(FFLAGS) readfile2.f
+	$(F77) -c $(FFLAGS1) readfile2.f
 	rm readfile2.f
 	ar r $(DESTIN)/jlpacc.a readfile2.o
 
@@ -102,7 +104,7 @@ jlp0_rdtable.o: jlp0_rdtable.for
 jlp_directory.o : $(JLPSUB)/jlp_directory.for
 	$(EXEC)/esoext1.exe -f $(JLPSUB)/jlp_directory.for
 	mv $(JLPSUB)/jlp_directory.f .
-	$(F77) -c $(FFLAGS) jlp_directory.f
+	$(F77) -c $(FFLAGS1) jlp_directory.f
 	rm jlp_directory.f
 	ar r $(DESTIN)/jlpacc.a jlp_directory.o
 

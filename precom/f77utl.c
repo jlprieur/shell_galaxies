@@ -14,9 +14,7 @@
 #include   <stdio.h>                        /* Standard I/O library     */
 #include   <f77stat.h>                      /* FORTRAN statement types  */
 
-int f77_sect(ptype,sect)
-int      *ptype;
-int      sect;
+int f77_sect(int *ptype, int sect)
 {
   int    section,err;
 
@@ -57,11 +55,8 @@ int      sect;
   return section;
 }
 
-char *find_f77(list,id,pno,ptype)        /* compare with f77 statements */
-FSTAT       *list;
-char          *id;
-int          *pno;
-int        *ptype;
+/* compare with f77 statements */
+char *find_f77(FSTAT *list, char *id, int *pno, int *ptype)        
 {
   char     c,*pid,*pstat;
 

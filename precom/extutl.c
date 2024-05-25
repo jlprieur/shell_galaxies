@@ -2,7 +2,7 @@
 
 .COPYRIGHT   (c) 1987 European Southern Observatory
 .LANGUAGE    C
-.IDENT       fpntr.c
+.IDENT       extutl.c
 .AUTHOR      Preben J. Grosbol [ESO/IPG]
 .KEYWORDS    file pointer, input/output files, include files
 .ENVIRONMENT UNIX
@@ -15,10 +15,10 @@
 ------------------------------------------------------------------------*/
 
 #include   <stdio.h>                        /* standard I/O routines    */
+#include   <stdlib.h>                       
+#include   <string.h>                       
 #include   <ctype.h>                        /* get type definitions     */
-#include   <esoext.h>                       /* definition of constants  */
-
-extern    int                  x_flag;      /* extension/option flag    */
+#include   <esoext1.h>                       /* definition of constants  */
 
 static    char         xname[MXFNAME];      /* storage for extension    */
 static    char         fname[MXFNAME];      /* storage for file name    */
@@ -28,10 +28,8 @@ static    FILE        *stack[MXLEVEL];      /* file pointer stack       */
 static    int              s_pntr = 0;      /* stack pointer            */
 static    int              l_pntr = 0;      /* stack pointer            */
 
-FILE *push_fp(fp,path,name)               /* push include file on stack */
-FILE    *fp;
-char    *path;
-char    *name;
+/* push include file on stack */
+FILE *push_fp(FILE *fp, char *path, char *name)  
 {
   char   *pc;
   FILE   *nfp;
@@ -70,8 +68,7 @@ FILE        *fp;
   return nfp;
 }
 
-char *push_lab(label)          /* push a label string on the stack       */
-char     *label;
+char *push_lab(char *label)          /* push a label string on the stack       */
 {
   char   *pc;
 
@@ -98,9 +95,7 @@ char *pop_lab()                /* pop label string off the stack         */
   return plab;
 }
 
-char *new_ext(name,ext)        /* generate file name with new extension */
-char   *name;
-char   *ext;
+char *new_ext(char *name, char *ext)        /* generate file name with new extension */
 {
   char   *pc,*pcx;
 
@@ -137,8 +132,7 @@ char *new_file()               /* get new file name from standard input */
   return (c==EOF && !n) ? (char *) 0 : fname;
 }
 
-char *incl_file(line)                 /* extract include file from line */
-char      *line;
+char *incl_file(char *line)                 /* extract include file from line */
 {
   char   *pcl,c; 
   int    n;

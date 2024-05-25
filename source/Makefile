@@ -15,7 +15,7 @@ WX_LIB := `wx-config --libs base,core`
 	$(EXEC)/esoext1.exe -I ../jlpsub -f $*.for
 	$(F77) -c $(FFLAGS) $*.f
 	$(F77) $(FFLAGS) -o $(EXEC)/$*.exe $*.o \
-	$(JLIB) $(FITSLIB) $(MATHLIB) $(XLIB) $(WX_LIB) $(LIBC)
+	$(JLIB) $(FITSLIB) $(MATHLIB) $(XLIB) $(WX_LIB) $(LIBC) -lz
 	rm $*.o
 
 # For debug (in Merate)

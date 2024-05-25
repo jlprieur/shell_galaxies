@@ -15,6 +15,8 @@
     The type consists of two byte: the LSB is a sequencial no. while
 	the MSB is the statement group.
 */
+#ifndef f77stat_h
+#define f77stat_h
 
 #define  ASSIGN                0x1001   /* ASSIGN statement             */
 #define  BACKSPACE             0x1002   /* BACKSPACE statement          */
@@ -88,3 +90,5 @@ typedef  struct {                       /* FORTRAN statements           */
            int                   type;  /* statement type               */
 	   char                   *id;  /* statement identifier         */
          } FSTAT;
+
+#endif
